@@ -22,9 +22,10 @@ export const PAL: Record<string, [number, 0 | 1, string]> = {
   'deepseek-v4-pro': [205, 0, 'DeepSeek'],
   'deepseek-v4-flash': [205, 1, 'DeepSeek'],
   'minimax-m3': [60, 0, 'MiniMax'],
+  'muse-spark-1.3': [175, 0, 'Meta'],
 };
 
-export const PROVIDERS = ['Anthropic', 'OpenAI', 'xAI', 'Z.ai', 'Moonshot', 'DeepSeek', 'MiniMax'];
+export const PROVIDERS = ['Anthropic', 'OpenAI', 'xAI', 'Z.ai', 'Moonshot', 'DeepSeek', 'MiniMax', 'Meta'];
 
 export const LEGEND: [Backend, string][] = [
   ['claude', 'Claude'],
@@ -48,4 +49,5 @@ export const BENCH: BenchModel[] = [
   { id: 'kimi-k3', name: 'Kimi K3', backend: 'opencode', binds: 'go-kimi-k3', pts: [['low', 34, null, 37, true], ['max', 44, 2.0, 38]] },
   { id: 'deepseek-v4-pro', name: 'DeepSeek V4 Pro', backend: 'opencode', binds: 'deepseek-v4-pro', pts: [['max', 36, 0.67, 67]] },
   { id: 'gpt-5.6-luna', name: 'GPT-5.6 Luna', backend: 'opencode', binds: 'go-luna', pts: [['low', 21, 0.01, 131], ['high', 32, 0.04, 132], ['max', 37, 0.18, 145]] },
+  { id: 'muse-spark-1.3', name: 'Muse Spark 1.3', backend: 'opencode', binds: '—', pts: [['xhigh', 45, 1.37, 228], ['max', 48, 1.6, 219]] },
 ];
