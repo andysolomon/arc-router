@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import plugin from 'tailwindcss/plugin';
 
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
@@ -39,5 +40,10 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // Size tap targets by input type, not viewport: coarse pointers (phones, tablets) get 44px targets.
+    plugin(({ addVariant }) => {
+      addVariant('touch', '@media (pointer: coarse)');
+    }),
+  ],
 } satisfies Config;

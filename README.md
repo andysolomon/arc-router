@@ -28,6 +28,13 @@ Other scripts:
 - `src/components/router/` — Router config page: parent defaults, chains, rungs, exclusions, policy diff panel.
 - `src/hooks/` — policy state with localStorage persistence, theme, chart resize.
 
+Responsive behavior (Router config):
+
+- **< 640px:** chain rows stack (label above rungs), rungs are a full-width vertical list with ↑/↓ reorder, and a fixed bottom bar shows change/warning status with **Copy block**.
+- **640–1023px:** label column returns and rungs flow inline; the section nav and bottom bar remain.
+- **≥ 1024px:** two-column grid with the policy panel sticky and capped to the viewport.
+- Tap targets and control text size follow the input device through a `touch:` variant (`@media (pointer: coarse)`): 40–44px targets, and 16px select text so iOS doesn't zoom on focus.
+
 State persisted in `localStorage`: `arc-router-tab`, `arc-router-theme`, `arc-router-policy`.
 
 ## Deploy to Vercel
