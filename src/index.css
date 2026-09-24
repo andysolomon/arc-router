@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: oklch(0.975 0.004 95);
+  --surface: oklch(0.995 0.002 95);
+  --line: oklch(0.9 0.006 95);
+  --grid: oklch(0.93 0.005 95);
+  --line2: oklch(0.94 0.005 95);
+  --chip: oklch(0.95 0.005 95);
+  --ink: oklch(0.21 0.01 95);
+  --muted: oklch(0.48 0.01 95);
+  --muted2: oklch(0.42 0.01 95);
+  --body2: oklch(0.35 0.01 95);
+  --faint: oklch(0.62 0.01 95);
+  --underline: oklch(0.8 0.006 95);
+  --dash: oklch(0.82 0.008 95);
+  --warn: oklch(0.5 0.14 55);
+  --warnline: oklch(0.75 0.12 55);
+  --add-bg: oklch(0.96 0.04 150);
+  --add-ink: oklch(0.4 0.1 150);
+  --del-bg: oklch(0.96 0.03 25);
+  --del-ink: oklch(0.45 0.13 25);
+  --danger: oklch(0.5 0.15 25);
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: oklch(0.17 0.006 95);
+  --surface: oklch(0.205 0.007 95);
+  --line: oklch(0.31 0.008 95);
+  --grid: oklch(0.26 0.007 95);
+  --line2: oklch(0.25 0.007 95);
+  --chip: oklch(0.27 0.008 95);
+  --ink: oklch(0.93 0.006 95);
+  --muted: oklch(0.7 0.01 95);
+  --muted2: oklch(0.76 0.01 95);
+  --body2: oklch(0.82 0.008 95);
+  --faint: oklch(0.52 0.01 95);
+  --underline: oklch(0.45 0.01 95);
+  --dash: oklch(0.42 0.01 95);
+  --warn: oklch(0.78 0.13 65);
+  --warnline: oklch(0.55 0.12 55);
+  --add-bg: oklch(0.29 0.05 150);
+  --add-ink: oklch(0.84 0.1 150);
+  --del-bg: oklch(0.29 0.05 25);
+  --del-ink: oklch(0.82 0.1 25);
+  --danger: oklch(0.75 0.14 25);
+  color-scheme: dark;
+}
+
+@layer base {
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Geist', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: var(--underline);
+  }
+  a:hover {
+    text-decoration-color: var(--ink);
+  }
+  select {
+    font: inherit;
+    color: inherit;
+  }
+}

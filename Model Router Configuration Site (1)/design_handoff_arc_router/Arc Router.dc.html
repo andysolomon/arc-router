@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:oklch(0.975 0.004 95);--surface:oklch(0.995 0.002 95);--line:oklch(0.9 0.006 95);--grid:oklch(0.93 0.005 95);--line2:oklch(0.94 0.005 95);--chip:oklch(0.95 0.005 95);--ink:oklch(0.21 0.01 95);--muted:oklch(0.48 0.01 95);--muted2:oklch(0.42 0.01 95);--body2:oklch(0.35 0.01 95);--faint:oklch(0.62 0.01 95);--underline:oklch(0.8 0.006 95);--dash:oklch(0.82 0.008 95);--warn:oklch(0.5 0.14 55);--warnline:oklch(0.75 0.12 55);--add-bg:oklch(0.96 0.04 150);--add-ink:oklch(0.4 0.1 150);--del-bg:oklch(0.96 0.03 25);--del-ink:oklch(0.45 0.13 25);--danger:oklch(0.5 0.15 25);color-scheme:light}
+:root[data-theme="dark"]{--bg:oklch(0.17 0.006 95);--surface:oklch(0.205 0.007 95);--line:oklch(0.31 0.008 95);--grid:oklch(0.26 0.007 95);--line2:oklch(0.25 0.007 95);--chip:oklch(0.27 0.008 95);--ink:oklch(0.93 0.006 95);--muted:oklch(0.7 0.01 95);--muted2:oklch(0.76 0.01 95);--body2:oklch(0.82 0.008 95);--faint:oklch(0.52 0.01 95);--underline:oklch(0.45 0.01 95);--dash:oklch(0.42 0.01 95);--warn:oklch(0.78 0.13 65);--warnline:oklch(0.55 0.12 55);--add-bg:oklch(0.29 0.05 150);--add-ink:oklch(0.84 0.1 150);--del-bg:oklch(0.29 0.05 25);--del-ink:oklch(0.82 0.1 25);--danger:oklch(0.75 0.14 25);color-scheme:dark}
+body{margin:0;background:var(--bg);-webkit-font-smoothing:antialiased}
+a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;text-decoration-color:var(--underline)}
+a:hover{text-decoration-color:var(--ink)}
+select{font:inherit;color:inherit}
+</style>
+</helmet>
+<div style="min-height:100vh;background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-serif;font-size:14px;line-height:1.5">
+  <header style="display:flex;align-items:center;gap:28px;padding:14px 32px;border-bottom:1px solid var(--line);flex-wrap:wrap;background:var(--surface)">
+    <div style="display:flex;align-items:baseline;gap:10px">
+      <span style="font-weight:600;font-size:15px;letter-spacing:-0.01em;white-space:nowrap">arc router</span>
+      <span style="font-family:'Geist Mono',monospace;font-size:12px;color:var(--muted);white-space:nowrap">runner-routing-v4</span>
+    </div>
+    <nav style="display:flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:8px;background:var(--bg)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="2">
+        <button onClick="{{ t.onClick }}" style="border:0;cursor:pointer;white-space:nowrap;padding:5px 12px;border-radius:6px;font:inherit;font-size:13px;font-weight:500;background:{{ t.bg }};color:{{ t.color }};box-shadow:{{ t.shadow }}">{{ t.label }}</button>
+      </sc-for>
+    </nav>
+    <div style="flex:1"></div>
+    <div style="display:flex;gap:16px;align-items:center;font-family:'Geist Mono',monospace;font-size:12px;color:var(--muted);flex-wrap:wrap">
+      <button onClick="{{ toggleTheme }}" style="border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:3px 10px;font:inherit;font-size:12px;cursor:pointer;white-space:nowrap">{{ themeLabel }}</button>
+      <span style="white-space:nowrap">policy updated {{ updatedDate }}</span>
+      <a href="https://github.com/andysolomon/arc-orchestrator" target="_blank" style="color:var(--muted);white-space:nowrap;display:{{ repoLinkDisplay }}">andysolomon/arc-orchestrator</a>
+    </div>
+  </header>
+
+  <sc-if value="{{ isBench }}" hint-placeholder-val="{{ true }}">
+    <main style="max-width:1200px;margin:0 auto;padding:40px 32px 96px;display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <h1 style="font-size:28px;font-weight:600;letter-spacing:-0.025em;margin:0;line-height:1.2;flex:1 1 auto">Intelligence Index vs {{ metricLabel }}</h1>
+          <div style="display:flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:8px;background:var(--surface)">
+            <sc-for list="{{ metricOpts }}" as="o" hint-placeholder-count="2">
+              <button onClick="{{ o.onClick }}" style="border:0;cursor:pointer;white-space:nowrap;padding:4px 10px;border-radius:5px;font:inherit;font-size:12px;background:{{ o.bg }};color:{{ o.color }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:8px;background:var(--surface)">
+            <sc-for list="{{ scaleOpts }}" as="o" hint-placeholder-count="2">
+              <button onClick="{{ o.onClick }}" style="border:0;cursor:pointer;white-space:nowrap;padding:4px 10px;border-radius:5px;font:inherit;font-size:12px;background:{{ o.bg }};color:{{ o.color }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;column-gap:22px;row-gap:8px;align-items:center">
+          <sc-for list="{{ legendGroups }}" as="g" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted)">{{ g.provider }}</span>
+              <sc-for list="{{ g.items }}" as="i">
+                <span onMouseEnter="{{ i.onEnter }}" onMouseLeave="{{ clearHover }}" style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;opacity:{{ i.opacity }}">
+                  <span style="position:relative;width:16px;height:0;border-top:1.5px {{ i.lineStyle }} {{ i.color }}"><span style="position:absolute;left:5px;top:-3.75px;width:6px;height:6px;border-radius:50%;background:{{ i.color }}"></span></span>
+                  {{ i.name }}
+                </span>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted);padding-left:{{ plotLeft }}px">Intelligence Index</div>
+      <div ref="{{ chartRef }}" onMouseLeave="{{ clearHover }}" style="position:relative;width:100%;min-height:340px">
+        <svg width="{{ chartW }}" height="{{ chartH }}" style="display:block;font-family:'Geist Mono',monospace">
+          <rect x="{{ plot.x }}" y="{{ plot.y }}" width="{{ plot.w }}" height="{{ plot.h }}" style="fill:none;stroke:var(--line);stroke-width:1"></rect>
+          <sc-for list="{{ yTicks }}" as="t">
+            <line x1="{{ t.x1 }}" x2="{{ t.x2 }}" y1="{{ t.y }}" y2="{{ t.y }}" style="stroke:var(--grid);stroke-width:1"></line>
+          </sc-for>
+          <sc-for list="{{ xTicks }}" as="t">
+            <line x1="{{ t.x }}" x2="{{ t.x }}" y1="{{ t.y1 }}" y2="{{ t.y2 }}" style="stroke:var(--grid);stroke-width:1"></line>
+          </sc-for>
+          <sc-for list="{{ series }}" as="s">
+            <polyline points="{{ s.points }}" style="fill:none;stroke:{{ s.color }};stroke-width:{{ s.width }};stroke-dasharray:{{ s.dash }};opacity:{{ s.opacity }};pointer-events:none"></polyline>
+            <polyline points="{{ s.points }}" onMouseEnter="{{ s.onEnter }}" onMouseLeave="{{ clearHover }}" style="fill:none;stroke:rgba(0,0,0,0);stroke-width:14;pointer-events:stroke;cursor:pointer"></polyline>
+          </sc-for>
+          <sc-for list="{{ dots }}" as="d">
+            <circle cx="{{ d.cx }}" cy="{{ d.cy }}" r="8.5" style="fill:none;stroke:{{ d.color }};stroke-width:1.25;opacity:{{ d.ringOpacity }}"></circle>
+            <circle cx="{{ d.cx }}" cy="{{ d.cy }}" r="{{ d.r }}" onMouseEnter="{{ d.onEnter }}" onMouseLeave="{{ clearHover }}" style="fill:{{ d.color }};stroke:var(--bg);stroke-width:1.5;cursor:pointer;opacity:{{ d.opacity }}"></circle>
+          </sc-for>
+        </svg>
+        <sc-for list="{{ yTicks }}" as="t">
+          <div style="position:absolute;left:{{ t.lx }}px;top:{{ t.y }}px;transform:translate(-100%,-50%);font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;pointer-events:none">{{ t.label }}</div>
+        </sc-for>
+        <sc-for list="{{ xTicks }}" as="t">
+          <div style="position:absolute;left:{{ t.x }}px;top:{{ t.ly }}px;transform:translate(-50%,-50%);font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;pointer-events:none">{{ t.label }}</div>
+        </sc-for>
+        <sc-for list="{{ labels }}" as="l">
+          <div onMouseEnter="{{ l.onEnter }}" onMouseLeave="{{ clearHover }}" style="position:absolute;left:{{ l.x }}px;top:{{ l.y }}px;transform:{{ l.transform }};font-size:12px;font-weight:{{ l.weight }};line-height:1;padding:3px 0;color:{{ l.color }};opacity:{{ l.opacity }};white-space:nowrap;cursor:pointer;pointer-events:{{ l.pe }}">{{ l.text }}</div>
+        </sc-for>
+        <div style="position:absolute;left:{{ axisX }}px;top:{{ axisY }}px;transform:translate(-50%,-50%);font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;pointer-events:none">{{ axisLabel }}</div>
+        <sc-if value="{{ hasTip }}">
+          <div style="position:absolute;left:{{ tip.left }}px;top:{{ tip.top }}px;transform:{{ tip.transform }};pointer-events:none;background:var(--ink);color:var(--bg);border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.55;min-width:200px;box-shadow:0 6px 24px oklch(0.21 0.01 95 / 0.18)">
+            <div style="font-weight:600;font-size:13px">{{ tip.name }} <span style="font-family:'Geist Mono',monospace;font-weight:400;opacity:0.7">@{{ tip.effort }}</span></div>
+            <div style="font-family:'Geist Mono',monospace;display:grid;grid-template-columns:auto auto;column-gap:14px;margin-top:4px">
+              <span style="opacity:0.7">Intelligence</span><span>{{ tip.score }}</span>
+              <span style="opacity:0.7">Cost / task</span><span>{{ tip.cost }}</span>
+              <span style="opacity:0.7">Output speed</span><span>{{ tip.speed }}</span>
+              <span style="opacity:0.7">arc binding</span><span>{{ tip.binds }}</span>
+              <span style="opacity:0.7">Routed in</span><span>{{ tip.routed }}</span>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+
+      <p style="margin:6px 0 0;font-size:13px;color:var(--muted);text-wrap:pretty">Each dot is one reasoning effort level, low to max. Dashed lines are lower-cost siblings in the same family. Ringed dots are rungs the current router config routes to. Hover a dot, line, or name for its values. Data: <a href="https://artificialanalysis.ai/models#intelligence" target="_blank">Artificial Analysis</a>, Sep 2026.</p>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--line);padding-top:14px">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <button onClick="{{ toggleTable }}" style="border:0;background:none;padding:0;font:inherit;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px"><span style="font-size:10px;color:var(--muted)">{{ tableCaret }}</span>Data table</button>
+          <sc-if value="{{ tableOpen }}">
+          <div style="display:flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:8px;background:var(--surface)">
+            <sc-for list="{{ viewOpts }}" as="o" hint-placeholder-count="2">
+              <button onClick="{{ o.onClick }}" style="border:0;cursor:pointer;white-space:nowrap;padding:4px 10px;border-radius:5px;font:inherit;font-size:12px;background:{{ o.bg }};color:{{ o.color }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+          <span style="font-family:'Geist Mono',monospace;font-size:12px;color:var(--muted)">{{ rowCount }}</span>
+          </sc-if>
+        </div>
+        <sc-if value="{{ tableOpen }}">
+        <div style="overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)">
+          <div style="min-width:820px">
+            <div style="display:grid;grid-template-columns:minmax(200px,1.5fr) 64px 92px 80px minmax(170px,1.2fr) 88px;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)">
+              <sc-for list="{{ headers }}" as="h" hint-placeholder-count="6">
+                <button onClick="{{ h.onClick }}" style="border:0;background:none;padding:0;font:inherit;color:{{ h.color }};cursor:pointer;text-align:{{ h.align }}">{{ h.label }}{{ h.arrow }}</button>
+              </sc-for>
+            </div>
+            <sc-for list="{{ rows }}" as="r" hint-placeholder-count="10">
+              <div onMouseEnter="{{ r.onEnter }}" onMouseLeave="{{ clearHover }}" style="display:grid;grid-template-columns:minmax(200px,1.5fr) 64px 92px 80px minmax(170px,1.2fr) 88px;gap:12px;padding:9px 16px;border-bottom:1px solid var(--line2);align-items:center;background:{{ r.bg }}">
+                <div style="display:flex;align-items:center;gap:8px;min-width:0">
+                  <span style="width:8px;height:8px;border-radius:50%;flex:none;background:{{ r.color }}"></span>
+                  <span style="font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</span>
+                  <span style="font-family:'Geist Mono',monospace;font-size:11px;padding:1px 6px;border-radius:4px;background:var(--chip);color:var(--muted2)">{{ r.effort }}</span>
+                </div>
+                <div style="font-family:'Geist Mono',monospace;text-align:right;font-weight:500">{{ r.score }}</div>
+                <div style="font-family:'Geist Mono',monospace;text-align:right">{{ r.cost }}</div>
+                <div style="font-family:'Geist Mono',monospace;text-align:right">{{ r.speed }}</div>
+                <div style="font-family:'Geist Mono',monospace;font-size:12px;display:flex;gap:6px;align-items:center;min-width:0">
+                  <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.binds }}</span>
+                </div>
+                <div style="font-family:'Geist Mono',monospace;font-size:12px;text-align:right;color:{{ r.routedColor }}">{{ r.routed }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <p style="margin:0;font-size:12.5px;color:var(--muted);max-width:820px;text-wrap:pretty">Each model shows low and high (medium is never routed); GPT-6 Luna, GPT-5.6 Luna, GLM 5.3 Flash, and DeepSeek V4.1 Flash also show max. Rows appear only where Artificial Analysis publishes that effort, so several OpenCode Go models have a single row. MiniMax M3 is published as one configuration with no effort levels. Kimi K3 is published at low and max only; its low score is an estimate (*) with no cost, so it appears in the table and speed chart but not the cost chart. Not on the leaderboard: GPT-5.5, Opus 4.8, Cursor Composer 2.5, Cursor Auto, Muse Spark 1.2, and GLM 5.2. Speed is blank where Artificial Analysis hasn't published it.</p>
+        </sc-if>
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isRouter }}">
+    <main style="max-width:1440px;margin:0 auto;padding:40px 32px 96px;display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+      <div style="flex:1 1 640px;min-width:0;display:flex;flex-direction:column;gap:40px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="font-size:28px;font-weight:600;letter-spacing:-0.025em;margin:0;line-height:1.2">Router configuration</h1>
+          <p style="margin:0;max-width:680px;color:var(--muted);text-wrap:pretty">Edits the fenced arc-model-policy block, the single authoritative routing input for ARC Pi and the arc-orchestrator runner. Rung order is fallback order. Each rung shows its Artificial Analysis Intelligence Index and cost per task.</p>
+        </div>
+
+        <section style="display:flex;flex-direction:column;gap:4px">
+          <h2 style="font-size:16px;font-weight:600;margin:0;letter-spacing:-0.01em">Parent defaults</h2>
+          <p style="margin:0 0 8px;font-size:13px;color:var(--muted)">The model each parent surface launches with.</p>
+          <sc-for list="{{ parentRows }}" as="p" hint-placeholder-count="2">
+            <div style="display:grid;grid-template-columns:140px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid var(--line);align-items:center">
+              <div>
+                <div style="font-weight:500">{{ p.label }}</div>
+                <div style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted)">parent-default {{ p.key }}</div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <select value="{{ p.model }}" onChange="{{ p.onModel }}" style="font-family:'Geist Mono',monospace;font-size:12.5px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface)">
+                  <sc-for list="{{ parentModelOpts }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for>
+                </select>
+                <select value="{{ p.effort }}" onChange="{{ p.onEffort }}" style="font-family:'Geist Mono',monospace;font-size:12.5px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface)">
+                  <sc-for list="{{ parentEffortOpts }}" as="o"><option value="{{ o }}">@{{ o }}</option></sc-for>
+                </select>
+              </div>
+            </div>
+          </sc-for>
+        </section>
+
+        <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+          <section style="display:flex;flex-direction:column;gap:4px">
+            <h2 style="font-size:16px;font-weight:600;margin:0;letter-spacing:-0.01em">{{ g.title }}</h2>
+            <p style="margin:0 0 8px;font-size:13px;color:var(--muted);text-wrap:pretty">{{ g.desc }}</p>
+            <sc-for list="{{ g.chains }}" as="c" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:140px minmax(0,1fr);gap:16px;padding:14px 0;border-top:1px solid var(--line)">
+                <div>
+                  <div style="font-weight:500">{{ c.label }}</div>
+                  <div style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted)">{{ c.sub }}</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+                  <sc-if value="{{ c.locked }}">
+                    <div style="font-size:13px;color:var(--muted);padding:6px 0">Parent-local. The parent runs analyze itself and never delegates.</div>
+                  </sc-if>
+                  <sc-if value="{{ c.editable }}">
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:stretch">
+                      <sc-for list="{{ c.rungs }}" as="r">
+                        <div style="display:flex;flex-direction:column;gap:4px;padding:7px 6px 7px 10px;border:1px solid {{ r.border }};border-radius:7px;background:var(--surface);min-width:168px">
+                          <div style="display:flex;align-items:center;gap:6px">
+                            <span style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--muted)">{{ r.n }}</span>
+                            <span style="width:7px;height:7px;border-radius:50%;flex:none;background:{{ r.color }}"></span>
+                            <span style="font-size:13px;font-weight:500;white-space:nowrap">{{ r.label }}</span>
+                            <span style="flex:1"></span>
+                            <button onClick="{{ r.onLeft }}" title="Move earlier" style="border:0;background:none;cursor:pointer;padding:0 3px;color:var(--muted);font-size:13px;line-height:1" style-hover="color:var(--ink)">‹</button>
+                            <button onClick="{{ r.onRight }}" title="Move later" style="border:0;background:none;cursor:pointer;padding:0 3px;color:var(--muted);font-size:13px;line-height:1" style-hover="color:var(--ink)">›</button>
+                            <button onClick="{{ r.onRemove }}" title="Remove rung" style="border:0;background:none;cursor:pointer;padding:0 3px;color:var(--muted);font-size:13px;line-height:1" style-hover="color:var(--danger)">×</button>
+                          </div>
+                          <div style="display:flex;align-items:center;gap:8px;padding-left:16px">
+                            <sc-if value="{{ r.locked }}">
+                              <span style="font-family:'Geist Mono',monospace;font-size:11.5px;color:var(--muted2)">@{{ r.effort }}</span>
+                            </sc-if>
+                            <sc-if value="{{ r.selectable }}">
+                              <select value="{{ r.effort }}" onChange="{{ r.onEffort }}" style="font-family:'Geist Mono',monospace;font-size:11.5px;padding:1px 2px;border:1px solid var(--line);border-radius:4px;background:var(--bg)">
+                                <sc-for list="{{ r.efforts }}" as="e"><option value="{{ e }}">@{{ e }}</option></sc-for>
+                              </select>
+                            </sc-if>
+                            <span title="{{ r.statTitle }}" style="font-family:'Geist Mono',monospace;font-size:11.5px;color:var(--muted);white-space:nowrap">{{ r.stat }}</span>
+                          </div>
+                        </div>
+                      </sc-for>
+                      <select value="" onChange="{{ c.onAdd }}" style="font-size:12.5px;padding:6px 8px;border:1px dashed var(--dash);border-radius:7px;background:transparent;color:var(--muted2);cursor:pointer;align-self:center">
+                        <option value="">+ Add rung</option>
+                        <sc-for list="{{ addOptions }}" as="o"><option value="{{ o.id }}">{{ o.label }}</option></sc-for>
+                      </select>
+                    </div>
+                    <sc-if value="{{ c.hasTail }}">
+                      <div style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted)">then tail → {{ tailText }}</div>
+                    </sc-if>
+                    <sc-for list="{{ c.warnings }}" as="w">
+                      <div style="font-size:12.5px;color:var(--warn)">{{ w }}</div>
+                    </sc-for>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </section>
+        </sc-for>
+
+        <section style="display:flex;flex-direction:column;gap:4px">
+          <h2 style="font-size:16px;font-weight:600;margin:0;letter-spacing:-0.01em">Exclusions</h2>
+          <p style="margin:0 0 8px;font-size:13px;color:var(--muted)">Identifiers that must not appear in any automatic chain.</p>
+          <div style="display:grid;grid-template-columns:140px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid var(--line);align-items:center">
+            <div style="font-family:'Geist Mono',monospace;font-size:12px">exclude-models</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <sc-for list="{{ excludeModels }}" as="m"><span style="font-family:'Geist Mono',monospace;font-size:12px;padding:3px 8px;border-radius:5px;background:var(--chip)">{{ m }}</span></sc-for>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:140px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid var(--line);align-items:center">
+            <div style="font-family:'Geist Mono',monospace;font-size:12px">exclude-efforts</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <sc-for list="{{ effortToggles }}" as="t">
+                <button onClick="{{ t.onClick }}" style="font-family:'Geist Mono',monospace;font-size:12px;padding:3px 10px;border-radius:5px;cursor:pointer;border:1px solid {{ t.border }};background:{{ t.bg }};color:{{ t.color }}">{{ t.v }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside style="flex:1 1 400px;max-width:560px;min-width:0;position:sticky;top:24px;display:flex;flex-direction:column;gap:16px">
+        <div style="border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden">
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap">
+            <span style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:500">arc-model-policy</span>
+            <span style="font-size:12px;color:{{ changeColor }}">{{ changeText }}</span>
+            <sc-if value="{{ hasWarnings }}"><span style="font-size:12px;color:var(--warn)">{{ warnText }}</span></sc-if>
+            <span style="flex:1"></span>
+            <span title="SHA-256 of the generated block" style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted)">sha256 {{ digest }}</span>
+          </div>
+          <div style="padding:10px 0;font-family:'Geist Mono',monospace;font-size:11.5px;line-height:1.65;max-height:56vh;overflow:auto">
+            <sc-for list="{{ diffLines }}" as="l" hint-placeholder-count="12">
+              <div style="display:flex;gap:8px;padding:0 14px;background:{{ l.bg }};color:{{ l.color }}">
+                <span style="width:8px;flex:none;user-select:none">{{ l.prefix }}</span>
+                <span style="white-space:pre-wrap;word-break:break-word;font-style:{{ l.style }}">{{ l.text }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--line)">
+            <button onClick="{{ copyBlock }}" style="border:0;cursor:pointer;padding:7px 14px;border-radius:6px;font:inherit;font-size:13px;font-weight:500;background:var(--ink);color:var(--bg)">{{ copyLabel }}</button>
+            <button onClick="{{ resetPolicy }}" style="border:1px solid var(--line);cursor:pointer;padding:7px 14px;border-radius:6px;font:inherit;font-size:13px;background:var(--surface);color:var(--ink)">Reset to main</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+          <div style="font-weight:600">Apply to arc-orchestrator</div>
+          <div style="display:grid;grid-template-columns:18px minmax(0,1fr);row-gap:8px;color:var(--body2)">
+            <span style="font-family:'Geist Mono',monospace;color:var(--muted)">1</span><span>Replace the fenced block in arc-pi <code style="font-family:'Geist Mono',monospace;font-size:12px">docs/arc-model-update-08-30-26.md</code></span>
+            <span style="font-family:'Geist Mono',monospace;color:var(--muted)">2</span><span><code style="font-family:'Geist Mono',monospace;font-size:12px">npm run policy:sync</code> in arc-pi</span>
+            <span style="font-family:'Geist Mono',monospace;color:var(--muted)">3</span><span><code style="font-family:'Geist Mono',monospace;font-size:12px">bun run generate:surfaces</code> in arc-orchestrator</span>
+            <span style="font-family:'Geist Mono',monospace;color:var(--muted)">4</span><span>Commit both repositories together. A digest mismatch between them is rejected.</span>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;bench&quot;,&quot;router&quot;],&quot;default&quot;:&quot;bench&quot;,&quot;tsType&quot;:&quot;'bench'|'router'&quot;},&quot;ringRouted&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  static COLORS = { claude: 'oklch(0.62 0.14 45)', codex: 'oklch(0.58 0.14 255)', composer: 'oklch(0.6 0.13 160)', opencode: 'oklch(0.57 0.14 315)', minimax: 'oklch(0.66 0.13 95)' };
+  static PAL = {
+    'opus-5.5': [40, 0, 'Anthropic'], 'fable-5.1': [88, 0, 'Anthropic'],
+    'gpt-6-sol': [255, 0, 'OpenAI'], 'gpt-6-luna': [300, 0, 'OpenAI'], 'gpt-5.6-luna': [300, 1, 'OpenAI'],
+    'grok-4.7': [10, 0, 'xAI'], 'glm-5.3': [145, 0, 'Z.ai'], 'glm-5.3-flash': [145, 1, 'Z.ai'],
+    'kimi-k3': [335, 0, 'Moonshot'], 'deepseek-v4-pro': [205, 0, 'DeepSeek'], 'deepseek-v4-flash': [205, 1, 'DeepSeek'],
+    'minimax-m3': [60, 0, 'MiniMax']
+  };
+  static PROVIDERS = ['Anthropic', 'OpenAI', 'xAI', 'Z.ai', 'Moonshot', 'DeepSeek', 'MiniMax'];
+  static LEGEND = [['claude', 'Claude'], ['codex', 'Codex'], ['composer', 'Cursor'], ['opencode', 'OpenCode Go'], ['minimax', 'MiniMax']];
+  // [effort, Intelligence Index, $ per task, output tokens/s | null]  Source: Artificial Analysis leaderboard, Sep 2026
+  static BENCH = [
+    { id: 'opus-5.5', name: 'Claude Opus 5.5', backend: 'claude', binds: 'opus-5.5', pts: [['low', 42, 0.55, 94], ['high', 54, 1.82, 91]] },
+    { id: 'fable-5.1', name: 'Claude Fable 5.1', backend: 'claude', binds: 'fable-5.1', pts: [['low', 47, 2.37, 54], ['high', 51, 3.91, 55]] },
+    { id: 'gpt-6-sol', name: 'GPT-6 Sol', backend: 'codex', binds: 'gpt-6-sol', pts: [['low', 34, 0.13, null], ['high', 43, 0.37, null]] },
+    { id: 'gpt-6-luna', name: 'GPT-6 Luna', backend: 'codex', binds: 'gpt-6-luna', pts: [['low', 21, 0.0045, null], ['high', 32, 0.03, null], ['max', 37, 0.07, null]] },
+    { id: 'grok-4.7', name: 'Grok 4.7', backend: 'composer', binds: 'cursor-grok-4.7-high', pts: [['high', 46, 2.73, 47]] },
+    { id: 'minimax-m3', name: 'MiniMax M3', backend: 'minimax', binds: 'minimax-m3', pts: [['default', 29, 0.51, 118]] },
+    { id: 'glm-5.3', name: 'GLM 5.3', backend: 'opencode', binds: 'glm-5.3', pts: [['max', 45, 2.01, 57]] },
+    { id: 'glm-5.3-flash', name: 'GLM 5.3 Flash', backend: 'opencode', binds: 'glm-5.3-flash', pts: [['max', 42, 0.25, 66]] },
+    { id: 'deepseek-v4-flash', name: 'DeepSeek V4.1 Flash', backend: 'opencode', binds: 'deepseek-v4-flash', pts: [['max', 39, 0.27, 219]] },
+    { id: 'kimi-k3', name: 'Kimi K3', backend: 'opencode', binds: 'go-kimi-k3', pts: [['low', 34, null, 37, true], ['max', 44, 2.0, 38]] },
+    { id: 'deepseek-v4-pro', name: 'DeepSeek V4 Pro', backend: 'opencode', binds: 'deepseek-v4-pro', pts: [['max', 36, 0.67, 67]] },
+    { id: 'gpt-5.6-luna', name: 'GPT-5.6 Luna', backend: 'opencode', binds: 'go-luna', pts: [['low', 21, 0.01, 131], ['high', 32, 0.04, 132], ['max', 37, 0.18, 145]] }
+  ];
+  static MODELS = [
+    ['fable-5.1', 'CC Fable 5.1', 'claude'], ['gpt-6-sol', 'Codex Sol 6', 'codex'], ['gpt-6-luna', 'Codex Luna 6', 'codex'], ['gpt-5.5', 'Codex GPT-5.5', 'codex'],
+    ['opus-5.5', 'CC Opus 5.5', 'claude'], ['opus-4.8', 'CC Opus 4.8', 'claude'], ['cursor-grok-4.7-high', 'Cursor Grok 4.7 High', 'composer'],
+    ['minimax-m3', 'MiniMax M3', 'minimax'], ['composer-2.5', 'Cursor Composer 2.5', 'composer'], ['cursor-auto', 'Cursor Auto', 'composer'],
+    ['opencode-go-glm-5.3-flash', 'Go GLM 5.3 Flash', 'opencode'], ['opencode-go-glm-5.3', 'Go GLM 5.3', 'opencode'],
+    ['opencode-go-deepseek-v4-pro', 'Go DeepSeek V4 Pro', 'opencode'], ['opencode-go-deepseek-v4-flash', 'Go DeepSeek V4 Flash', 'opencode'],
+    ['opencode-go-kimi-k3', 'Go Kimi K3', 'opencode'], ['opencode-go-qwen3.8-max', 'Go Qwen 3.8 Max', 'opencode'],
+    ['opencode-go-muse-spark-1.2-contributor', 'Go Muse Spark 1.2', 'opencode'], ['opencode-go-glm-5.2', 'Go GLM 5.2', 'opencode'],
+    ['opencode-go-kimi-k2.7-code', 'Go Kimi K2.7 Code', 'opencode'], ['opencode-go-grok-4.6', 'Go Grok 4.6', 'opencode'],
+    ['opencode-go-gpt-5.6-luna', 'Go Luna 5.6', 'opencode']
+  ];
+  static RMAP = {
+    'fable-5.1': 'fable-5.1', 'gpt-6-sol': 'gpt-6-sol', 'gpt-6-luna': 'gpt-6-luna', 'opus-5.5': 'opus-5.5', 'cursor-grok-4.7-high': 'grok-4.7@high',
+    'minimax-m3': 'minimax-m3@default', 'opencode-go-glm-5.3': 'glm-5.3@max', 'opencode-go-glm-5.3-flash': 'glm-5.3-flash@max', 'opencode-go-deepseek-v4-flash': 'deepseek-v4-flash@max', 'opencode-go-gpt-5.6-luna': 'gpt-5.6-luna@max',
+    'opencode-go-kimi-k3': 'kimi-k3@max', 'opencode-go-deepseek-v4-pro': 'deepseek-v4-pro@max'
+  };
+  static PHASES = ['explore', 'research', 'plan', 'verify', 'deploy'];
+  static WORKLOADS = ['hard-heavy', 'hard-medium', 'hard-light', 'medium-heavy', 'medium-medium', 'medium-light', 'easy-heavy', 'easy-medium', 'easy-light'];
+  static ORIG = {
+    parent: { pi: 'openai-codex/gpt-6-sol@high', cc: 'anthropic/claude-fable-5-1@high' },
+    tail: ['opencode-go-kimi-k3@none', 'minimax-m3@high', 'composer-2.5@none'],
+    phases: {
+      explore: ['fable-5.1@high', 'gpt-6-sol@high', 'gpt-6-luna@max', 'opencode-go-glm-5.3@none'],
+      research: ['fable-5.1@high', 'gpt-6-sol@high', 'gpt-6-luna@max', 'opencode-go-glm-5.3@none'],
+      plan: ['fable-5.1@high', 'gpt-6-sol@high', 'gpt-6-luna@max', 'opencode-go-glm-5.3@none'],
+      verify: ['gpt-6-luna@max', 'gpt-5.5@low', 'opencode-go-deepseek-v4-pro@none', 'opus-4.8@low', 'cursor-grok-4.7-high@high'],
+      deploy: ['gpt-5.5@low', 'opus-4.8@low', 'cursor-grok-4.7-high@high']
+    },
+    workloads: {
+      'hard-heavy': ['fable-5.1@high', 'gpt-6-sol@high', 'cursor-grok-4.7-high@high', 'opencode-go-glm-5.3@none'],
+      'hard-medium': ['gpt-6-sol@high', 'cursor-grok-4.7-high@high', 'opencode-go-glm-5.3@none'],
+      'hard-light': ['gpt-6-sol@high', 'cursor-grok-4.7-high@high', 'opencode-go-glm-5.3@none'],
+      'medium-heavy': ['gpt-6-sol@high', 'cursor-grok-4.7-high@high', 'opencode-go-glm-5.3@none'],
+      'medium-medium': ['opus-5.5@high', 'cursor-grok-4.7-high@high', 'opencode-go-glm-5.3@none'],
+      'medium-light': ['opencode-go-glm-5.3-flash@none', 'cursor-grok-4.7-high@high', 'opus-4.8@low', 'gpt-5.5@high', 'opus-5.5@high'],
+      'easy-heavy': ['opencode-go-glm-5.3-flash@none', 'opus-5.5@high', 'gpt-6-luna@max', 'opus-4.8@low', 'opus-5.5@low', 'cursor-grok-4.7-high@high'],
+      'easy-medium': ['opencode-go-glm-5.3-flash@none', 'gpt-6-luna@max', 'opus-4.8@low', 'gpt-5.5@low', 'cursor-grok-4.7-high@high'],
+      'easy-light': ['opencode-go-glm-5.3-flash@none', 'gpt-5.5@low', 'cursor-grok-4.7-high@high']
+    },
+    excludeModels: ['haiku-4.5', 'sonnet-5'],
+    excludeEfforts: ['xhigh']
+  };
+  static BINDINGS = [
+    'binding fable: Fable 5.1 | fable-5.1 | claude-fable-5-1 | claude', 'binding fable-5.1: Fable 5.1 | fable-5.1 | claude-fable-5-1 | claude',
+    'binding sol: Sol 6 | gpt-6-sol | gpt-6-sol | codex', 'binding gpt-6-sol: Sol 6 | gpt-6-sol | gpt-6-sol | codex',
+    'binding luna: Luna 6 Max | gpt-6-luna | gpt-6-luna | codex | max', 'binding gpt-6-luna: Luna 6 Max | gpt-6-luna | gpt-6-luna | codex | max',
+    'binding gpt-5.5: GPT 5.5 | gpt-5.5 | gpt-5.5 | codex', 'binding opus: Opus 5.5 | opus-5.5 | claude-opus-5-5 | claude',
+    'binding opus-5.5: Opus 5.5 | opus-5.5 | claude-opus-5-5 | claude', 'binding opus-4.8: Opus 4.8 | opus-4.8 | claude-opus-4-8 | claude',
+    'binding grok: Cursor Grok 4.7 High | cursor-grok-4.7-high | cursor-grok-4.7-high | composer', 'binding grok-4.7: Cursor Grok 4.7 High | cursor-grok-4.7-high | cursor-grok-4.7-high | composer',
+    'binding minimax: MiniMax M3 | minimax-m3 | MiniMax-M3 | minimax', 'binding minimax-m3: MiniMax M3 | minimax-m3 | MiniMax-M3 | minimax',
+    'binding composer: Composer 2.5 | composer-2.5 | composer-2.5 | composer', 'binding composer-2.5: Composer 2.5 | composer-2.5 | composer-2.5 | composer',
+    'binding cursor-auto: Cursor Auto | cursor-auto | auto | composer',
+    'binding glm-5.3-flash: OpenCode Go GLM 5.3 Flash | opencode-go-glm-5.3-flash | opencode-go/glm-5.3-flash | opencode',
+    'binding glm-5.3: OpenCode Go GLM 5.3 | opencode-go-glm-5.3 | opencode-go/glm-5.3 | opencode',
+    'binding deepseek-v4-pro: OpenCode Go DeepSeek V4 Pro | opencode-go-deepseek-v4-pro | opencode-go/deepseek-v4-pro | opencode',
+    'binding deepseek-v4-flash: OpenCode Go DeepSeek V4 Flash | opencode-go-deepseek-v4-flash | opencode-go/deepseek-v4-flash | opencode',
+    'binding go-kimi-k3: OpenCode Go Kimi K3 | opencode-go-kimi-k3 | opencode-go/kimi-k3 | opencode',
+    'binding qwen-3.8-max: OpenCode Go Qwen 3.8 Max | opencode-go-qwen3.8-max | opencode-go/qwen3.8-max | opencode',
+    'binding muse-spark-1.2: OpenCode Go Muse Spark 1.2 | opencode-go-muse-spark-1.2-contributor | opencode-go/muse-spark-1.2-contributor | opencode',
+    'binding glm-5.2: OpenCode Go GLM 5.2 | opencode-go-glm-5.2 | opencode-go/glm-5.2 | opencode',
+    'binding kimi-k2.7-code: OpenCode Go Kimi K2.7 Code | opencode-go-kimi-k2.7-code | opencode-go/kimi-k2.7-code | opencode',
+    'binding go-grok-4.6: OpenCode Go Grok 4.6 | opencode-go-grok-4.6 | opencode-go/grok-4.6 | opencode',
+    'binding go-luna: OpenCode Go Luna 5.6 | opencode-go-gpt-5.6-luna | opencode-go/gpt-5.6-luna | opencode',
+    'surface fable-5.1: CC Fable', 'surface gpt-6-sol: Codex Sol', 'surface gpt-6-luna: Codex Luna', 'surface gpt-5.5: Codex GPT-5.5',
+    'surface opus-5.5: CC Opus 5.5', 'surface opus-4.8: CC Opus 4.8', 'surface cursor-grok-4.7-high: Cursor Grok 4.7 High | fixed-effort high',
+    'surface minimax-m3: MiniMax M3', 'surface composer-2.5: Cursor Composer 2.5', 'surface cursor-auto: Cursor Auto',
+    'surface opencode-go-glm-5.3-flash: OpenCode Go GLM 5.3 Flash', 'surface opencode-go-glm-5.3: OpenCode Go GLM 5.3',
+    'surface opencode-go-deepseek-v4-pro: OpenCode Go DeepSeek V4 Pro', 'surface opencode-go-deepseek-v4-flash: OpenCode Go DeepSeek V4 Flash',
+    'surface opencode-go-kimi-k3: OpenCode Go Kimi K3', 'surface opencode-go-qwen3.8-max: OpenCode Go Qwen 3.8 Max',
+    'surface opencode-go-muse-spark-1.2-contributor: OpenCode Go Muse Spark 1.2', 'surface opencode-go-glm-5.2: OpenCode Go GLM 5.2',
+    'surface opencode-go-kimi-k2.7-code: OpenCode Go Kimi K2.7 Code', 'surface opencode-go-grok-4.6: OpenCode Go Grok 4.6',
+    'surface opencode-go-gpt-5.6-luna: OpenCode Go Luna 5.6'
+  ];
+  static PARENT_MODELS = ['openai-codex/gpt-6-sol', 'openai-codex/gpt-6-luna', 'openai-codex/gpt-5.5', 'anthropic/claude-fable-5-1', 'anthropic/claude-opus-5-5', 'anthropic/claude-opus-4-8'];
+
+  state = (() => {
+    let policy = null, tab = 'bench';
+    try { policy = JSON.parse(localStorage.getItem('arc-router-policy') || 'null'); tab = localStorage.getItem('arc-router-tab') || this.props.defaultTab || 'bench'; } catch (e) {}
+    let theme = null; try { theme = localStorage.getItem('arc-router-theme'); } catch (e) {}
+    if (!theme) theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return { theme, tab, scale: 'linear', tableOpen: false, metric: 'cost', view: 'all', sortKey: 'score', sortDir: -1, hover: null, chartW: 960, policy: policy || JSON.parse(JSON.stringify(Component.ORIG)), digest: '…', copied: false };
+  })();
+
+  onResize = () => { const n = window.innerWidth < 950; if (n !== this.state.narrow) this.setState({ narrow: n }); };
+  chartRef = (el) => {
+    if (!this.ro) this.ro = new ResizeObserver(es => { const w = Math.round(es[0].contentRect.width); if (w && Math.abs(w - this.state.chartW) > 1) this.setState({ chartW: w }); });
+    if (el === this._chartEl) return;
+    this.ro.disconnect(); this._chartEl = el; if (el) this.ro.observe(el);
+  };
+  applyTheme() { document.documentElement.dataset.theme = this.state.theme; }
+  componentDidMount() { this.applyTheme(); this.updateDigest(); this.onResize(); window.addEventListener('resize', this.onResize); }
+  componentDidUpdate() { this.applyTheme(); this.updateDigest(); }
+  componentWillUnmount() { if (this.ro) this.ro.disconnect(); window.removeEventListener('resize', this.onResize); }
+  async updateDigest() {
+    const text = this._full; if (!text || text === this._digested) return; this._digested = text;
+    try {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+      const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+      this.setState({ digest: hex.slice(0, 12) });
+    } catch (e) { this.setState({ digest: 'n/a' }); }
+  }
+
+  model(id) { const m = Component.MODELS.find(x => x[0] === id); return m ? { id: m[0], label: m[1], backend: m[2] } : { id, label: id, backend: 'opencode' }; }
+  efforts(id) {
+    const b = this.model(id).backend;
+    if (id === 'cursor-grok-4.7-high') return ['high'];
+    if (id === 'gpt-6-luna') return ['low', 'medium', 'high', 'max'];
+    if (b === 'claude' || b === 'codex') return ['low', 'medium', 'high'];
+    if (b === 'minimax') return ['low', 'medium', 'high'];
+    return ['none'];
+  }
+  defaultEffort(id) { const e = this.efforts(id); if (id === 'gpt-6-luna') return 'max'; return e.includes('high') ? 'high' : e[0]; }
+  lookup(rung) {
+    const [id, eff] = rung.split('@'); const m = Component.RMAP[id]; if (!m) return null;
+    const [bid, beff] = m.split('@'); const bm = Component.BENCH.find(b => b.id === bid); if (!bm) return null;
+    const p = bm.pts.find(x => x[0] === (beff || eff)); return p ? { m: bm, p } : null;
+  }
+  usage(pol) {
+    const u = {}; const add = r => { const l = this.lookup(r); if (l) { const k = l.m.id + '@' + l.p[0]; u[k] = (u[k] || 0) + 1; } };
+    Object.values(pol.phases).forEach(c => new Set(c).forEach(add));
+    Object.values(pol.workloads).forEach(c => new Set(c).forEach(add));
+    new Set(pol.tail).forEach(add);
+    return u;
+  }
+  rungIssue(r) {
+    const pol = this.state.policy; const [id, eff] = r.split('@');
+    if (pol.excludeModels.includes(id)) return `${id} is in exclude-models.`;
+    if (id === 'cursor-auto') return 'cursor-auto is explicit-only and holds no automatic rung.';
+    const lunaMax = id === 'gpt-6-luna' && eff === 'max';
+    if (pol.excludeEfforts.includes(eff) && !lunaMax) return `${r} uses excluded effort ${eff}.`;
+    if (eff === 'max' && !lunaMax) return `${r}: efforts above high are reserved for Luna's max profile.`;
+    return null;
+  }
+  validate(list, isTail) {
+    const w = [];
+    if (!list.length) w.push(isTail ? 'Tail is empty: exhausted chains have no availability backup.' : 'Empty chain: every task goes straight to the emergency tail.');
+    const seen = {};
+    list.forEach(r => { if (seen[r]) w.push(`${r} appears more than once.`); seen[r] = 1; const i = this.rungIssue(r); if (i) w.push(i); });
+    return [...new Set(w)];
+  }
+  setPolicy(fn) {
+    const p = JSON.parse(JSON.stringify(this.state.policy)); fn(p);
+    try { localStorage.setItem('arc-router-policy', JSON.stringify(p)); } catch (e) {}
+    this.setState({ policy: p });
+  }
+  getList(p, path) { return path.length === 1 ? p[path[0]] : p[path[0]][path[1]]; }
+  editList(path, fn) { this.setPolicy(p => { const l = this.getList(p, path); fn(l); }); }
+
+  genLines(pol, updated) {
+    const L = ['policy: runner-routing-v4', 'updated: ' + updated, 'supersedes: docs/arc-model-update-08-18-26.md', 'fallback: availability-only', 'parent-local: analyze',
+      'parent-default pi: ' + pol.parent.pi, 'parent-default claude-code: ' + pol.parent.cc, '§FOLD', 'tail: ' + pol.tail.join(', ')];
+    Component.PHASES.forEach(ph => L.push(`phase ${ph}: ${pol.phases[ph].join(', ')}`));
+    Component.WORKLOADS.forEach(w => L.push(`workload ${w}: ${pol.workloads[w].join(', ')}`));
+    L.push('exclude-models: ' + pol.excludeModels.join(', '), 'exclude-efforts: ' + pol.excludeEfforts.join(', '));
+    return L;
+  }
+
+  renderVals() {
+    const s = this.state, C = Component, pol = s.policy;
+    const INK = 'var(--ink)', MUTED = 'var(--muted)', SURF = 'var(--surface)', BG = 'var(--bg)', LINE = 'var(--line)';
+    const seg = (opts, cur, key) => opts.map(([v, label]) => ({ label, onClick: () => this.setState({ [key]: v }), bg: cur === v ? INK : 'transparent', color: cur === v ? BG : MUTED }));
+    const usage = this.usage(pol);
+    const showRings = this.props.ringRouted ?? true;
+
+    // chart
+    const W = Math.max(360, s.chartW), H = W < 640 ? 360 : 480;
+    const ml = 44, mr = 12, mt = 8, mb = 48, pw = W - ml - mr, ph = H - mt - mb;
+    const LL = s.theme === 'dark' ? 0.75 : 0.6;
+    const mcol = m => { const p = C.PAL[m.id] || [0, 0]; return `oklch(${LL} 0.15 ${p[0]})`; };
+    const mi = s.metric === 'speed' ? 3 : 2;
+    const fmtC = c => c == null ? '—' : '$' + (c < 0.01 ? c : c.toFixed(2));
+    const fmtX = v => s.metric === 'cost' ? '$' + v : v + ' t/s';
+    const ptsOf = m => m.pts.filter(p => p[mi] != null);
+    const all = []; C.BENCH.forEach(m => ptsOf(m).forEach(p => all.push({ m, p })));
+    let X, xt;
+    if (s.scale === 'log') {
+      const [d0, d1] = s.metric === 'cost' ? [0.003, 12] : [30, 260];
+      X = v => ml + (Math.log(v) - Math.log(d0)) / (Math.log(d1) - Math.log(d0)) * pw;
+      xt = s.metric === 'cost' ? [0.01, 0.03, 0.1, 0.3, 1, 3, 10] : [30, 50, 100, 200];
+    } else {
+      const mx = Math.max(...all.map(a => a.p[mi]));
+      const r = mx / 5, e = Math.pow(10, Math.floor(Math.log10(r))), f = r / e;
+      const step = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * e;
+      const d1 = Math.ceil(mx * 1.04 / step) * step;
+      X = v => ml + v / d1 * pw; xt = []; for (let v = 0; v <= d1 + 1e-9; v += step) xt.push(+v.toFixed(4));
+    }
+    const ys = all.map(a => a.p[1]);
+    const ylo = Math.max(0, Math.floor(Math.min(...ys) / 10) * 10 - 5), yhi = Math.ceil((Math.max(...ys) + 1) / 10) * 10;
+    const Y = v => mt + (1 - (v - ylo) / (yhi - ylo)) * ph;
+    const xTicks = xt.map(v => ({ x: X(v), y1: mt, y2: mt + ph, ly: mt + ph + 14, label: fmtX(v) }));
+    const yTicks = []; for (let v = Math.ceil(ylo / 10) * 10; v <= yhi; v += 10) yTicks.push({ x1: ml, x2: ml + pw, y: Y(v), lx: ml - 8, ty: Y(v) + 4, label: String(v) });
+    const hovM = s.hover ? s.hover.split('@')[0] : null;
+    const dim = m => (hovM && hovM !== m.id ? 0.28 : 1);
+    const series = C.BENCH.map(m => ({ m, ps: ptsOf(m) })).filter(x => x.ps.length > 1).map(({ m, ps }) => ({ points: ps.map(p => `${X(p[mi]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join(' '), color: mcol(m), dash: (C.PAL[m.id] || [])[1] ? '5 4' : 'none', opacity: dim(m), width: hovM === m.id ? 2.5 : 1.5, onEnter: () => this.setState({ hover: m.id + '@' }) }));
+    const dots = all.map(({ m, p }) => {
+      const key = m.id + '@' + p[0];
+      const ps = ptsOf(m), last = ps[ps.length - 1] === p;
+      return { cx: X(p[mi]), cy: Y(p[1]), r: (last ? 5 : 3.5) + (s.hover === key ? 1.5 : 0), color: mcol(m), opacity: dim(m), ringOpacity: showRings && usage[key] ? dim(m) : 0, onEnter: () => this.setState({ hover: key }) };
+    });
+    const obstacles = all.map(({ p }) => ({ x0: X(p[mi]) - 10, y0: Y(p[1]) - 10, x1: X(p[mi]) + 10, y1: Y(p[1]) + 10 }));
+    const placed = [];
+    const hit = (b) => b.x0 < ml + 2 || b.x1 > ml + pw - 2 || b.y0 < mt + 2 || b.y1 > mt + ph - 2 ||
+      placed.some(q => b.x0 < q.x1 && q.x0 < b.x1 && b.y0 < q.y1 && q.y0 < b.y1) ||
+      obstacles.some(q => b.x0 < q.x1 && q.x0 < b.x1 && b.y0 < q.y1 && q.y0 < b.y1);
+    const labels = C.BENCH.filter(m => ptsOf(m).length).map(m => { const ps = ptsOf(m), p = ps[ps.length - 1]; return { m, cx: X(p[mi]), cy: Y(p[1]), w: m.name.length * 7.2 + 4 }; })
+      .sort((a, b) => a.cx - b.cx).map(l => {
+        const H2 = 9, cands = [];
+        for (const dy of [-16, 16, 0, -32, 32, -48, 48, -64, 64, -80, 80, -100, 100, -120, 120]) for (const dx of [12, 28, 44]) for (const side of [1, -1]) cands.push({ side, dy, dx });
+        let pick = null;
+        for (const c of cands) {
+          const x = l.cx + c.side * c.dx, y = l.cy + c.dy;
+          const b = c.side > 0 ? { x0: x, x1: x + l.w, y0: y - H2, y1: y + H2 } : { x0: x - l.w, x1: x, y0: y - H2, y1: y + H2 };
+          if (!hit(b)) { pick = { x, y, side: c.side, b }; break; }
+        }
+        const hidden = !pick;
+        if (!pick) { const x = l.cx + 12, y = l.cy - 16; pick = { x, y, side: 1, b: null }; } else placed.push(pick.b);
+        return { x: pick.x, y: pick.y, text: l.m.name, transform: pick.side < 0 ? 'translate(-100%,-50%)' : 'translate(0,-50%)', opacity: hidden ? (hovM === l.m.id ? 1 : 0) : dim(l.m), pe: hidden ? 'none' : 'auto', color: mcol(l.m), weight: hovM === l.m.id ? 600 : 500, onEnter: () => this.setState({ hover: l.m.id + '@' }) };
+      });
+    let tip = null;
+    if (s.hover) {
+      const [mid, eff] = s.hover.split('@'); const m = C.BENCH.find(b => b.id === mid); const p = m && m.pts.find(x => x[0] === eff);
+      if (p && p[mi] != null) {
+        const cx = X(p[mi]), cy = Y(p[1]), n = usage[s.hover] || 0;
+        const tx = cx < 120 ? '0%' : cx > W - 140 ? '-100%' : '-50%';
+        const below = cy < 190;
+        tip = { left: cx, top: below ? cy + 16 : cy - 14, transform: `translate(${tx}, ${below ? '0' : '-100%'})`, name: m.name, effort: p[0], score: p[4] ? p[1] + ' (estimated)' : String(p[1]), cost: fmtC(p[2]), speed: p[3] != null ? p[3] + ' t/s' : 'no data', binds: m.binds, routed: n ? `${n} chain${n > 1 ? 's' : ''}` : 'not routed' };
+      }
+    }
+
+    // table
+    let rows = []; C.BENCH.forEach(m => m.pts.forEach(p => rows.push({ m, p, key: m.id + '@' + p[0] })));
+    if (s.view === 'best') rows = C.BENCH.map(m => { const p = [...m.pts].sort((a, b) => b[1] - a[1] || a[2] - b[2])[0]; return { m, p, key: m.id + '@' + p[0] }; });
+    const sk = { score: r => r.p[1], cost: r => r.p[2] ?? 999, speed: r => r.p[3] ?? -1, name: r => r.m.name, routed: r => usage[r.key] || 0, binds: r => r.m.binds }[s.sortKey] || (r => r.p[1]);
+    rows.sort((a, b) => { const va = sk(a), vb = sk(b); return (va < vb ? -1 : va > vb ? 1 : 0) * s.sortDir || b.p[1] - a.p[1]; });
+    const hdr = [['name', 'Model', 'left'], ['score', 'Index', 'right'], ['cost', 'Cost / task', 'right'], ['speed', 'Speed', 'right'], ['binds', 'arc binding', 'left'], ['routed', 'Routed in', 'right']];
+    const headers = hdr.map(([k, label, align]) => ({ label, align, color: s.sortKey === k ? INK : MUTED, arrow: s.sortKey === k ? (s.sortDir < 0 ? ' ↓' : ' ↑') : '', onClick: () => this.setState(st => ({ sortKey: k, sortDir: st.sortKey === k ? -st.sortDir : (k === 'name' || k === 'binds' || k === 'cost' ? 1 : -1) })) }));
+    const tableRows = rows.map(({ m, p, key }) => {
+      const n = usage[key] || 0;
+      return { name: m.name, effort: p[0], score: p[4] ? p[1] + '*' : String(p[1]), cost: fmtC(p[2]), speed: p[3] != null ? p[3] + ' t/s' : '—', binds: m.binds, color: mcol(m), routed: n ? `${n} chain${n > 1 ? 's' : ''}` : '—', routedColor: n ? INK : MUTED, bg: s.hover === key ? BG : 'transparent', onEnter: () => this.setState({ hover: key }) };
+    });
+
+    // router
+    const addOptions = C.MODELS.map(m => ({ id: m[0], label: m[1] }));
+    let warnCount = 0;
+    const chain = (path, label, sub, hasTail) => {
+      const list = this.getList(pol, path);
+      const rungs = list.map((r, i) => {
+        const [id, eff] = r.split('@'); const M = this.model(id); const ef = this.efforts(id); const lk = this.lookup(r); const issue = this.rungIssue(r);
+        return {
+          n: i + 1, label: M.label, effort: eff, efforts: ef, locked: ef.length === 1, selectable: ef.length > 1, color: C.COLORS[M.backend],
+          border: issue ? 'var(--warnline)' : LINE,
+          stat: lk ? `${lk.p[1]} · $${lk.p[2] < 0.01 ? lk.p[2] : lk.p[2].toFixed(2)}` : 'not on AA',
+          statTitle: lk ? `Artificial Analysis: ${lk.m.name} @${lk.p[0]}, Intelligence Index ${lk.p[1]}` : 'Not on the Artificial Analysis leaderboard',
+          onEffort: e => { const v = e.target.value; this.editList(path, l => { l[i] = id + '@' + v; }); },
+          onLeft: () => i > 0 && this.editList(path, l => { [l[i - 1], l[i]] = [l[i], l[i - 1]]; }),
+          onRight: () => i < list.length - 1 && this.editList(path, l => { [l[i + 1], l[i]] = [l[i], l[i + 1]]; }),
+          onRemove: () => this.editList(path, l => { l.splice(i, 1); })
+        };
+      });
+      const warnings = this.validate(list, path[0] === 'tail'); warnCount += warnings.length;
+      return { label, sub, locked: false, editable: true, hasTail, rungs, warnings, onAdd: e => { const id = e.target.value; e.target.value = ''; if (id) this.editList(path, l => { l.push(id + '@' + this.defaultEffort(id)); }); } };
+    };
+    const groups = [
+      { title: 'Phases', desc: 'Worker chains per lifecycle phase. Fallback is availability-only: task, malformed-output, and verification failures on any rung are terminal.', chains: [{ label: 'analyze', sub: 'parent-local', locked: true, editable: false, rungs: [], warnings: [] }, ...C.PHASES.map(ph => chain(['phases', ph], ph, 'phase', true))] },
+      { title: 'Implement workloads', desc: 'Implement chains keyed by the nine canonical workload classes, difficulty then size.', chains: C.WORKLOADS.map(w => chain(['workloads', w], w.replace('-', ' · '), 'workload ' + w, true)) },
+      { title: 'Emergency tail', desc: 'Availability-only rungs appended to every automatic worker stack. The last rung is terminal.', chains: [chain(['tail'], 'tail', 'all stacks', false)] }
+    ];
+    const tailText = pol.tail.map(r => this.model(r.split('@')[0]).label).join(' · ') || 'none';
+    const parentRows = [['ARC Pi', 'pi'], ['Claude Code', 'cc']].map(([label, k]) => {
+      const [model, effort] = pol.parent[k].split('@');
+      return { label, key: k === 'cc' ? 'claude-code' : 'pi', model, effort,
+        onModel: e => { const v = e.target.value; this.setPolicy(p => { p.parent[k] = v + '@' + effort; }); },
+        onEffort: e => { const v = e.target.value; this.setPolicy(p => { p.parent[k] = model + '@' + v; }); } };
+    });
+    const effortToggles = ['xhigh', 'max'].map(v => { const on = pol.excludeEfforts.includes(v); return { v, bg: on ? INK : SURF, color: on ? BG : MUTED, border: on ? INK : LINE, onClick: () => this.setPolicy(p => { p.excludeEfforts = on ? p.excludeEfforts.filter(x => x !== v) : [...p.excludeEfforts, v]; }) }; });
+
+    const dirty = JSON.stringify(pol) !== JSON.stringify(C.ORIG);
+    const today = new Date().toISOString().slice(0, 10);
+    const updatedDate = dirty ? today : '2026-09-23';
+    const newL = this.genLines(pol, updatedDate), origL = this.genLines(C.ORIG, '2026-09-23');
+    const keyOf = l => l.split(':')[0]; const om = {}; origL.forEach(l => { om[keyOf(l)] = l; });
+    const diffLines = []; let changes = 0;
+    newL.forEach(l => {
+      if (l === '§FOLD') { diffLines.push({ prefix: '', text: `… ${C.BINDINGS.length} binding and surface lines, unchanged`, bg: 'transparent', color: MUTED, style: 'italic' }); return; }
+      const o = om[keyOf(l)];
+      if (o === l) diffLines.push({ prefix: '', text: l, bg: 'transparent', color: INK, style: 'normal' });
+      else { changes++; if (o) diffLines.push({ prefix: '−', text: o, bg: 'var(--del-bg)', color: 'var(--del-ink)', style: 'normal' }); diffLines.push({ prefix: '+', text: l, bg: 'var(--add-bg)', color: 'var(--add-ink)', style: 'normal' }); }
+    });
+    const full = newL.flatMap(l => l === '§FOLD' ? C.BINDINGS : [l]).join('\n');
+    this._full = full;
+
+    return {
+      tabs: [['bench', 'Benchmarks'], ['router', 'Router config']].map(([v, label]) => ({ label, onClick: () => { try { localStorage.setItem('arc-router-tab', v); } catch (e) {} this.setState({ tab: v }); }, bg: s.tab === v ? SURF : 'transparent', color: s.tab === v ? INK : MUTED, shadow: s.tab === v ? '0 1px 2px oklch(0.21 0.01 95 / 0.08), 0 0 0 1px var(--line)' : 'none' })),
+      themeLabel: s.theme === 'dark' ? 'Light mode' : 'Dark mode',
+      updatedDate, repoLinkDisplay: s.narrow ? 'none' : 'inline',
+      toggleTheme: () => { const t = s.theme === 'dark' ? 'light' : 'dark'; try { localStorage.setItem('arc-router-theme', t); } catch (e) {} this.setState({ theme: t }); },
+      isBench: s.tab === 'bench', isRouter: s.tab === 'router',
+      metricLabel: { cost: 'cost per task', speed: 'output speed' }[s.metric],
+      metricOpts: seg([['cost', 'Cost per task'], ['speed', 'Output speed']], s.metric, 'metric'),
+      scaleOpts: seg([['linear', 'Linear'], ['log', 'Log']], s.scale, 'scale'),
+      viewOpts: seg([['all', 'All efforts'], ['best', 'Best per model']], s.view, 'view'),
+      legendGroups: C.PROVIDERS.map(provider => ({ provider, items: C.BENCH.filter(m => (C.PAL[m.id] || [])[2] === provider).map(m => ({ name: m.name, color: mcol(m), lineStyle: C.PAL[m.id][1] ? 'dashed' : 'solid', opacity: dim(m), onEnter: () => this.setState({ hover: m.id + '@' }) })) })).filter(g => g.items.length),
+      plot: { x: ml, y: mt, w: pw, h: ph }, plotLeft: ml,
+      tableOpen: !!s.tableOpen, tableCaret: s.tableOpen ? '▼' : '▶', toggleTable: () => this.setState(st => ({ tableOpen: !st.tableOpen })),
+      chartRef: this.chartRef, chartW: W, chartH: H, xTicks, yTicks, series, dots, labels,
+      axisX: ml + pw / 2, axisY: H - 10, axisLabel: { cost: 'Cost per task (USD)', speed: 'Output speed (tokens/s)' }[s.metric],
+      hasTip: !!tip, tip: tip || {}, clearHover: () => this.state.hover && this.setState({ hover: null }),
+      headers, rows: tableRows, rowCount: `${tableRows.length} configs`,
+      parentRows, parentModelOpts: C.PARENT_MODELS, parentEffortOpts: ['low', 'medium', 'high', 'xhigh', 'max'],
+      groups, addOptions, tailText, excludeModels: pol.excludeModels, effortToggles,
+      diffLines, digest: s.digest,
+      changeText: changes ? `${changes} line${changes > 1 ? 's' : ''} changed` : 'matches main', changeColor: changes ? 'var(--add-ink)' : MUTED,
+      hasWarnings: warnCount > 0, warnText: `${warnCount} warning${warnCount > 1 ? 's' : ''}`,
+      copyLabel: s.copied ? 'Copied' : 'Copy block',
+      copyBlock: () => { try { navigator.clipboard.writeText('```arc-model-policy\n' + full + '\n```'); } catch (e) {} this.setState({ copied: true }); clearTimeout(this._ct); this._ct = setTimeout(() => this.setState({ copied: false }), 1600); },
+      resetPolicy: () => { try { localStorage.removeItem('arc-router-policy'); } catch (e) {} this.setState({ policy: JSON.parse(JSON.stringify(C.ORIG)) }); }
+    };
+  }
+}
+</script>
+</body>
+</html>
