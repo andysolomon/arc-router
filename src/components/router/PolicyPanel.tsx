@@ -101,7 +101,7 @@ export function PolicyPanel({ policy, updatedDate, warnCount, onReset }: Props) 
         <div className="grid grid-cols-[18px_minmax(0,1fr)] gap-y-2 text-body2">
           <span className="font-mono text-muted">1</span>
           <span>
-            Replace the fenced block in arc-pi <code className={CODE}>docs/arc-model-update-08-30-26.md</code>
+            Replace the fenced block in arc-pi <code className={CODE}>policy/arc-model-policy.md</code>
           </span>
           <span className="font-mono text-muted">2</span>
           <span>
