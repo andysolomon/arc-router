@@ -139,7 +139,7 @@ export function DataTable({ theme, hover, setHover, clearHover, usage }: Props) 
       {open && (
         <p className="m-0 max-w-[820px] text-pretty text-[12.5px] text-muted">
           Each model shows low and high (medium is never routed); GPT-6 Luna, GPT-5.6 Luna, GLM 5.3 Flash, and DeepSeek V4.1 Flash also
-          show max. Muse Spark 1.3 is published at xhigh and max only and has no arc binding yet. Rows appear only where Artificial Analysis publishes that effort, so several OpenCode Go models have a single row.
+          show max. Muse Spark 1.3 is published at xhigh and max only (the router binds xhigh). Rows appear only where Artificial Analysis publishes that effort, so several OpenCode Go models have a single row.
           MiniMax M3 is published as one configuration with no effort levels. Kimi K3 is published at low and max only; its low score is
           an estimate (*) with no cost, so it appears in the table and speed chart but not the cost chart. Not on the leaderboard:
           GPT-5.5, Opus 4.8, Cursor Composer 2.5, Cursor Auto, Muse Spark 1.2, and GLM 5.2. Speed is blank where Artificial Analysis

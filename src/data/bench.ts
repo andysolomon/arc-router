@@ -49,5 +49,5 @@ export const BENCH: BenchModel[] = [
   { id: 'kimi-k3', name: 'Kimi K3', backend: 'opencode', binds: 'go-kimi-k3', pts: [['low', 34, null, 37, true], ['max', 44, 2.0, 38]] },
   { id: 'deepseek-v4-pro', name: 'DeepSeek V4 Pro', backend: 'opencode', binds: 'deepseek-v4-pro', pts: [['max', 36, 0.67, 67]] },
   { id: 'gpt-5.6-luna', name: 'GPT-5.6 Luna', backend: 'opencode', binds: 'go-luna', pts: [['low', 21, 0.01, 131], ['high', 32, 0.04, 132], ['max', 37, 0.18, 145]] },
-  { id: 'muse-spark-1.3', name: 'Muse Spark 1.3', backend: 'opencode', binds: '—', pts: [['xhigh', 45, 1.37, 228], ['max', 48, 1.6, 219]] },
+  { id: 'muse-spark-1.3', name: 'Muse Spark 1.3', backend: 'opencode', binds: 'muse-spark-1.3', pts: [['xhigh', 45, 1.37, 228], ['max', 48, 1.6, 219]] },
 ];
