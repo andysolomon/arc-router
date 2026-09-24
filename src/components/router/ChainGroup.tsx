@@ -5,6 +5,7 @@ import { validate } from '../../lib/validate';
 import type { ListPath, Policy } from '../../types';
 import type { EditList } from './RouterPage';
 import { Rung } from './Rung';
+import { ROW, Section } from './Section';
 
 export interface ChainSpec {
   key: string;
@@ -16,6 +17,7 @@ export interface ChainSpec {
 }
 
 interface Props {
+  id: string;
   title: string;
   desc: string;
   chains: ChainSpec[];
@@ -24,14 +26,12 @@ interface Props {
   tailText: string;
 }
 
-export function ChainGroup({ title, desc, chains, policy, editList, tailText }: Props) {
+export function ChainGroup({ id, title, desc, chains, policy, editList, tailText }: Props) {
   return (
-    <section className="flex flex-col gap-1">
-      <h2 className="m-0 text-[16px] font-semibold tracking-[-0.01em]">{title}</h2>
-      <p className="mb-2 mt-0 text-pretty text-[13px] text-muted">{desc}</p>
+    <Section id={id} title={title} desc={desc}>
       {chains.map((c) => (
-        <div key={c.key} className="grid grid-cols-[140px_minmax(0,1fr)] gap-4 border-t border-line py-[14px]">
-          <div>
+        <div key={c.key} className={`${ROW} sm:py-[14px]`}>
+          <div className="flex items-baseline gap-2 sm:block">
             <div className="font-medium">{c.label}</div>
             <div className="font-mono text-[11px] text-muted">{c.sub}</div>
           </div>
@@ -39,12 +39,12 @@ export function ChainGroup({ title, desc, chains, policy, editList, tailText }: 
             {c.path ? (
               <EditableChain path={c.path} hasTail={c.hasTail} policy={policy} editList={editList} tailText={tailText} />
             ) : (
-              <div className="py-[6px] text-[13px] text-muted">Parent-local. The parent runs analyze itself and never delegates.</div>
+              <div className="text-[13px] text-muted sm:py-[6px]">Parent-local. The parent runs analyze itself and never delegates.</div>
             )}
           </div>
         </div>
       ))}
-    </section>
+    </Section>
   );
 }
 
@@ -62,7 +62,8 @@ function EditableChain({ path, hasTail, policy, editList, tailText }: ChainProps
 
   return (
     <>
-      <div className="flex flex-wrap items-stretch gap-[6px]">
+      {/* Phones: one full-width rung per line, in fallback order. Wider: rungs flow inline. */}
+      <ol className="m-0 flex list-none flex-col items-stretch gap-[6px] p-0 sm:flex-row sm:flex-wrap">
         {list.map((r, i) => (
           <Rung
             key={`${i}-${r}`}
@@ -70,6 +71,8 @@ function EditableChain({ path, hasTail, policy, editList, tailText }: ChainProps
             rung={r}
             policy={policy}
             duplicate={list.indexOf(r) !== list.lastIndexOf(r)}
+            isFirst={i === 0}
+            isLast={i === list.length - 1}
             onEffort={(v) =>
               editList(path, (l) => {
                 l[i] = r.split('@')[0] + '@' + v;
@@ -94,27 +97,30 @@ function EditableChain({ path, hasTail, policy, editList, tailText }: ChainProps
             }
           />
         ))}
-        <select
-          value=""
-          onChange={(e) => {
-            const id = e.target.value;
-            e.target.value = '';
-            if (id) {
-              editList(path, (l) => {
-                l.push(id + '@' + defaultEffort(id));
-              });
-            }
-          }}
-          className="cursor-pointer self-center rounded-[7px] border border-dashed border-dash bg-transparent px-2 py-[6px] text-[12.5px] text-muted2"
-        >
-          <option value="">+ Add rung</option>
-          {MODELS.map((m) => (
-            <option key={m[0]} value={m[0]}>
-              {m[1]}
-            </option>
-          ))}
-        </select>
-      </div>
+        <li className="flex sm:self-center">
+          <select
+            value=""
+            aria-label="Add rung"
+            onChange={(e) => {
+              const id = e.target.value;
+              e.target.value = '';
+              if (id) {
+                editList(path, (l) => {
+                  l.push(id + '@' + defaultEffort(id));
+                });
+              }
+            }}
+            className="w-full cursor-pointer rounded-[7px] border border-dashed border-dash bg-transparent px-2 py-[6px] text-[12.5px] text-muted2 sm:w-auto touch:min-h-[44px] touch:text-[16px]"
+          >
+            <option value="">+ Add rung</option>
+            {MODELS.map((m) => (
+              <option key={m[0]} value={m[0]}>
+                {m[1]}
+              </option>
+            ))}
+          </select>
+        </li>
+      </ol>
       {hasTail && <div className="font-mono text-[11px] text-muted">then tail → {tailText}</div>}
       {warnings.map((w) => (
         <div key={w} className="text-[12.5px] text-warn">

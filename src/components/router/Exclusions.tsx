@@ -1,18 +1,15 @@
 import type { Policy, PolicyUpdater } from '../../types';
+import { ROW, Section } from './Section';
 
 interface Props {
   policy: Policy;
   setPolicy: PolicyUpdater;
 }
 
-const ROW = 'grid grid-cols-[140px_minmax(0,1fr)] items-center gap-4 border-t border-line py-3';
-
 export function Exclusions({ policy, setPolicy }: Props) {
   return (
-    <section className="flex flex-col gap-1">
-      <h2 className="m-0 text-[16px] font-semibold tracking-[-0.01em]">Exclusions</h2>
-      <p className="mb-2 mt-0 text-[13px] text-muted">Identifiers that must not appear in any automatic chain.</p>
-      <div className={ROW}>
+    <Section id="exclusions" title="Exclusions" desc="Identifiers that must not appear in any automatic chain.">
+      <div className={`${ROW} sm:items-center`}>
         <div className="font-mono text-[12px]">exclude-models</div>
         <div className="flex flex-wrap gap-[6px]">
           {policy.excludeModels.map((m) => (
@@ -22,7 +19,7 @@ export function Exclusions({ policy, setPolicy }: Props) {
           ))}
         </div>
       </div>
-      <div className={ROW}>
+      <div className={`${ROW} sm:items-center`}>
         <div className="font-mono text-[12px]">exclude-efforts</div>
         <div className="flex flex-wrap gap-[6px]">
           {(['xhigh', 'max'] as const).map((v) => {
@@ -31,12 +28,13 @@ export function Exclusions({ policy, setPolicy }: Props) {
               <button
                 key={v}
                 type="button"
+                aria-pressed={on}
                 onClick={() =>
                   setPolicy((p) => {
                     p.excludeEfforts = on ? p.excludeEfforts.filter((x) => x !== v) : [...p.excludeEfforts, v];
                   })
                 }
-                className={`cursor-pointer rounded-[5px] border px-[10px] py-[3px] font-mono text-[12px] ${
+                className={`cursor-pointer rounded-[5px] border px-[10px] py-[3px] font-mono text-[12px] touch:min-h-[40px] touch:min-w-[64px] touch:px-4 ${
                   on ? 'border-ink bg-ink text-bg' : 'border-line bg-surface text-muted'
                 }`}
               >
@@ -46,6 +44,6 @@ export function Exclusions({ policy, setPolicy }: Props) {
           })}
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

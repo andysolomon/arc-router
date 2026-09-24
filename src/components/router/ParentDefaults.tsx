@@ -1,5 +1,6 @@
 import { PARENT_EFFORTS, PARENT_MODELS } from '../../data/models';
 import type { Policy, PolicyUpdater } from '../../types';
+import { ROW, Section } from './Section';
 
 interface Props {
   policy: Policy;
@@ -11,24 +12,25 @@ const ROWS: [string, 'pi' | 'cc', string][] = [
   ['Claude Code', 'cc', 'claude-code'],
 ];
 
-const SELECT = 'rounded-md border border-line bg-surface px-2 py-[6px] font-mono text-[12.5px]';
+// 16px text on touch devices prevents iOS focus zoom; selects share the row evenly there.
+const SELECT =
+  'min-w-0 rounded-md border border-line bg-surface px-2 py-[6px] font-mono text-[12.5px] touch:min-h-[44px] touch:text-[16px]';
 
 export function ParentDefaults({ policy, setPolicy }: Props) {
   return (
-    <section className="flex flex-col gap-1">
-      <h2 className="m-0 text-[16px] font-semibold tracking-[-0.01em]">Parent defaults</h2>
-      <p className="mb-2 mt-0 text-[13px] text-muted">The model each parent surface launches with.</p>
+    <Section id="parent" title="Parent defaults" desc="The model each parent surface launches with.">
       {ROWS.map(([label, k, key]) => {
         const [model, effort] = policy.parent[k].split('@');
         return (
-          <div key={k} className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-4 border-t border-line py-3">
-            <div>
+          <div key={k} className={`${ROW} sm:items-center`}>
+            <div className="flex items-baseline gap-2 sm:block">
               <div className="font-medium">{label}</div>
               <div className="font-mono text-[11px] text-muted">parent-default {key}</div>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 sm:flex sm:flex-wrap">
               <select
                 value={model}
+                aria-label={`${label} model`}
                 onChange={(e) => {
                   const v = e.target.value;
                   setPolicy((p) => {
@@ -45,6 +47,7 @@ export function ParentDefaults({ policy, setPolicy }: Props) {
               </select>
               <select
                 value={effort}
+                aria-label={`${label} effort`}
                 onChange={(e) => {
                   const v = e.target.value;
                   setPolicy((p) => {
@@ -63,6 +66,6 @@ export function ParentDefaults({ policy, setPolicy }: Props) {
           </div>
         );
       })}
-    </section>
+    </Section>
   );
 }
