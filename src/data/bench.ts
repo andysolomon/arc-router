@@ -1,4 +1,12 @@
-import type { Backend, BenchModel } from '../types';
+// Artificial Analysis leaderboard dataset (Sep 2026). This is editorial
+// benchmark data for visualization only; it is *not* routing authority. The
+// authoritative capability evidence the runtime routes on is the vendored
+// capability snapshot (DeepSWE / CursorBench), joined in lib/bench-join.ts.
+// Rows name the policy binding base or registry stable id they correspond to
+// so the join is data-driven rather than a hand-maintained map.
+
+import type { BenchModel } from '../types';
+import type { Backend } from '../routing-core/index';
 
 export const COLORS: Record<Backend, string> = {
   claude: 'oklch(0.62 0.14 45)',
@@ -6,6 +14,7 @@ export const COLORS: Record<Backend, string> = {
   composer: 'oklch(0.6 0.13 160)',
   opencode: 'oklch(0.57 0.14 315)',
   minimax: 'oklch(0.66 0.13 95)',
+  kimi: 'oklch(0.6 0.12 335)',
 };
 
 /** id -> [hue, dashed (1) | solid (0), provider] */

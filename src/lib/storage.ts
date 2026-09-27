@@ -25,5 +25,7 @@ export function removeItem(key: string): void {
 export const KEYS = {
   tab: 'arc-router-tab',
   theme: 'arc-router-theme',
-  policy: 'arc-router-policy',
+  // v2: drafts are keyed to the canonical digest they were edited from.
+  policy: 'arc-router-policy-draft-v2',
+  simulator: 'arc-router-simulator-v1',
 } as const;
