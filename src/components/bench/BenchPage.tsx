@@ -1,13 +1,21 @@
+// Benchmarks: the Artificial Analysis leaderboard (editorial visualization
+// data) joined with the authoritative routing evidence — registry identity,
+// capability-snapshot bands with their benchmark provenance, cost priors, and
+// which chains of the draft policy route to each rung.
+
 import { useCallback, useMemo, useState } from 'react';
-import { usage as computeUsage } from '../../lib/lookup';
-import type { Metric, Policy, Scale, Theme } from '../../types';
+import { CANONICAL } from '../../canonical';
+import { BENCH } from '../../data/bench';
+import { joinBench, usageByBenchKey } from '../../lib/bench-join';
+import type { RoutingPolicy } from '../../routing-core/index';
+import type { Metric, Scale, Theme } from '../../types';
 import { Segmented } from '../Segmented';
 import { Chart } from './Chart';
 import { DataTable } from './DataTable';
 import { Legend } from './Legend';
 
 interface Props {
-  policy: Policy;
+  policy: RoutingPolicy;
   theme: Theme;
 }
 
@@ -27,16 +35,17 @@ export function BenchPage({ policy, theme }: Props) {
   const [metric, setMetric] = useState<Metric>('cost');
   const [scale, setScale] = useState<Scale>('linear');
   const [hover, setHoverState] = useState<string | null>(null);
-  const usage = useMemo(() => computeUsage(policy), [policy]);
+  const usage = useMemo(() => usageByBenchKey(policy, CANONICAL.registry, BENCH), [policy]);
+  const rows = useMemo(() => joinBench(BENCH, policy, CANONICAL.registry, CANONICAL.snapshot), [policy]);
 
   const setHover = useCallback((h: string | null) => setHoverState(h), []);
   const clearHover = useCallback(() => setHoverState((h) => (h ? null : h)), []);
 
   return (
-    <main className="mx-auto flex max-w-[1200px] flex-col gap-7 px-8 pb-24 pt-10">
+    <main className="mx-auto flex max-w-[1200px] flex-col gap-7 px-4 pb-24 pt-6 sm:px-8 sm:pt-10">
       <div className="flex flex-col gap-[14px]">
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="m-0 flex-[1_1_auto] text-[28px] font-semibold leading-[1.2] tracking-[-0.025em]">
+          <h1 className="m-0 flex-[1_1_auto] text-[24px] font-semibold leading-[1.2] tracking-[-0.025em] sm:text-[28px]">
             Intelligence Index vs {METRIC_LABEL[metric]}
           </h1>
           <Segmented options={METRIC_OPTS} value={metric} onChange={setMetric} />
@@ -46,26 +55,15 @@ export function BenchPage({ policy, theme }: Props) {
       </div>
 
       <div className="flex flex-col gap-[6px]">
-        <Chart
-          metric={metric}
-          scale={scale}
-          theme={theme}
-          hover={hover}
-          setHover={setHover}
-          clearHover={clearHover}
-          usage={usage}
-        />
+        <Chart metric={metric} scale={scale} theme={theme} hover={hover} setHover={setHover} clearHover={clearHover} usage={usage} />
         <p className="mb-0 mt-[6px] text-pretty text-[13px] text-muted">
-          Each dot is one reasoning effort level, low to max. Dashed lines are lower-cost siblings in the same family. Ringed dots are
-          rungs the current router config routes to. Hover a dot, line, or name for its values. Data:{' '}
-          <a href="https://artificialanalysis.ai/models#intelligence" target="_blank" rel="noreferrer">
-            Artificial Analysis
-          </a>
-          , Sep 2026.
+          Each dot is one reasoning effort level, low to max. Dashed lines are lower-cost siblings in the same family. Ringed dots are rungs the draft policy routes to. Hover a dot, line, or name for its values. Leaderboard data:{' '}
+          <a href="https://artificialanalysis.ai/models#intelligence" target="_blank" rel="noreferrer">Artificial Analysis</a>, Sep 2026 — editorial, not routing authority. Routing evidence comes from the capability snapshot{' '}
+          <span className="font-mono text-[12px]">{CANONICAL.snapshot.snapshotVersion}</span> shown in the table.
         </p>
       </div>
 
-      <DataTable theme={theme} hover={hover} setHover={setHover} clearHover={clearHover} usage={usage} />
+      <DataTable theme={theme} hover={hover} setHover={setHover} clearHover={clearHover} rows={rows} />
     </main>
   );
 }

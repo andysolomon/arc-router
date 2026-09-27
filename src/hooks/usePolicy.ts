@@ -1,48 +1,73 @@
-import { useCallback, useState } from 'react';
-import { ORIG } from '../data/policy';
-import { clonePolicy } from '../lib/policy';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { CANONICAL } from '../canonical';
+import {
+  clonePolicy,
+  policiesEqual,
+  validatePolicy,
+  policyHasErrors,
+  type PolicyIssue,
+  type RoutingPolicy,
+} from '../routing-core/index';
 import { getItem, KEYS, removeItem, setItem } from '../lib/storage';
-import type { Policy, PolicyUpdater } from '../types';
 
-function isPolicy(x: unknown): x is Policy {
-  if (!x || typeof x !== 'object') return false;
-  const p = x as Record<string, unknown>;
-  const parent = p.parent as Record<string, unknown> | undefined;
-  return (
-    !!parent && typeof parent.pi === 'string' && typeof parent.cc === 'string' &&
-    Array.isArray(p.tail) && !!p.phases && typeof p.phases === 'object' && !!p.workloads && typeof p.workloads === 'object' &&
-    Array.isArray(p.excludeModels) && Array.isArray(p.excludeEfforts)
-  );
+interface Draft {
+  canonicalDigest: string;
+  policy: RoutingPolicy;
 }
 
-function loadPolicy(): Policy {
+function isDraft(value: unknown): value is Draft {
+  if (!value || typeof value !== 'object') return false;
+  const draft = value as Partial<Draft>;
+  return typeof draft.canonicalDigest === 'string' && !!draft.policy && typeof draft.policy === 'object' && typeof (draft.policy as RoutingPolicy).label === 'string';
+}
+
+/** A draft is only reusable against the canonical policy it was edited from. */
+function loadDraft(): { policy: RoutingPolicy; staleDraftDropped: boolean } {
   try {
     const parsed: unknown = JSON.parse(getItem(KEYS.policy) ?? 'null');
-    if (isPolicy(parsed)) return parsed;
+    if (isDraft(parsed)) {
+      if (parsed.canonicalDigest === CANONICAL.source.digest) return { policy: parsed.policy, staleDraftDropped: false };
+      removeItem(KEYS.policy);
+      return { policy: clonePolicy(CANONICAL.policy), staleDraftDropped: true };
+    }
   } catch {
     /* corrupt or missing */
   }
-  return clonePolicy(ORIG);
+  return { policy: clonePolicy(CANONICAL.policy), staleDraftDropped: false };
 }
 
-export function usePolicy() {
-  const [policy, setState] = useState<Policy>(loadPolicy);
+export type PolicyUpdater = (fn: (draft: RoutingPolicy) => RoutingPolicy) => void;
 
-  /** Apply `fn` to a deep copy; the previous policy object is never mutated. */
-  const setPolicy = useCallback<PolicyUpdater>(
-    (fn) => {
-      const next = clonePolicy(policy);
-      fn(next);
-      setItem(KEYS.policy, JSON.stringify(next));
-      setState(next);
-    },
-    [policy],
-  );
+export function usePolicy() {
+  const [initial] = useState(loadDraft);
+  const [policy, setState] = useState<RoutingPolicy>(initial.policy);
+  const [staleDraftDropped, setStaleDraftDropped] = useState(initial.staleDraftDropped);
+
+  const setPolicy = useCallback<PolicyUpdater>((fn) => {
+    setState((current) => fn(current));
+  }, []);
+
+  useEffect(() => {
+    if (policiesEqual(policy, CANONICAL.policy)) {
+      removeItem(KEYS.policy);
+    } else {
+      setItem(KEYS.policy, JSON.stringify({ canonicalDigest: CANONICAL.source.digest, policy } satisfies Draft));
+    }
+  }, [policy]);
 
   const reset = useCallback(() => {
     removeItem(KEYS.policy);
-    setState(clonePolicy(ORIG));
+    setState(clonePolicy(CANONICAL.policy));
+    setStaleDraftDropped(false);
   }, []);
 
-  return { policy, setPolicy, reset };
+  const replace = useCallback((next: RoutingPolicy) => {
+    setState(clonePolicy(next));
+  }, []);
+
+  const dirty = useMemo(() => !policiesEqual(policy, CANONICAL.policy), [policy]);
+  const issues = useMemo<PolicyIssue[]>(() => validatePolicy(policy, { registry: CANONICAL.registry }), [policy]);
+  const invalid = useMemo(() => policyHasErrors(issues), [issues]);
+
+  return { policy, setPolicy, replace, reset, dirty, issues, invalid, staleDraftDropped };
 }

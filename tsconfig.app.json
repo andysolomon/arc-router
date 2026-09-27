@@ -13,6 +13,7 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
     "noEmit": true,
+    "resolveJsonModule": true,
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
