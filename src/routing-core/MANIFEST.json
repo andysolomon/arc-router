@@ -1,7 +1,7 @@
 {
   "contract": "arc-router-routing-core-sync/v1",
   "routingCore": "arc-routing-core/v1",
-  "sourceCommit": "c86ee856acb64909f3d3fb8941f338032445d557",
+  "sourceCommit": "da3729aff4db1e5bbaa7279ac12493f1465c1c1e",
   "policy": {
     "label": "runner-routing-v4",
     "updated": "2026-09-23",
