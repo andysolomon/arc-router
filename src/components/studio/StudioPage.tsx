@@ -30,7 +30,7 @@ const SECTIONS: [string, string][] = [
   ['constraints', 'Constraints'],
 ];
 
-const PARENT_MODELS = ['openai-codex/gpt-6-sol', 'openai-codex/gpt-6-luna', 'openai-codex/gpt-5.5', 'anthropic/claude-fable-5-1', 'anthropic/claude-opus-5-5', 'anthropic/claude-opus-4-8'];
+const PARENT_MODELS = ['openai-codex/gpt-6.1-sol', 'openai-codex/gpt-6-luna', 'anthropic/claude-sonnet-5-5', 'anthropic/claude-fable-5-1', 'anthropic/claude-opus-5-5', 'anthropic/claude-opus-4-8'];
 
 export function StudioPage({ policy, setPolicy, reset, dirty, issues, staleDraftDropped }: Props) {
   const errors = issues.filter((issue) => issue.severity === 'error');

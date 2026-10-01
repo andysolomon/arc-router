@@ -21,7 +21,8 @@ export const COLORS: Record<Backend, string> = {
 export const PAL: Record<string, [number, 0 | 1, string]> = {
   'opus-5.5': [40, 0, 'Anthropic'],
   'fable-5.1': [88, 0, 'Anthropic'],
-  'gpt-6-sol': [255, 0, 'OpenAI'],
+  'sonnet-5.5': [54, 0, 'Anthropic'],
+  'gpt-6.1-sol': [255, 0, 'OpenAI'],
   'gpt-6-luna': [300, 0, 'OpenAI'],
   'gpt-5.6-luna': [300, 1, 'OpenAI'],
   'grok-4.7': [10, 0, 'xAI'],
@@ -45,10 +46,13 @@ export const LEGEND: [Backend, string][] = [
 ];
 
 // [effort, Intelligence Index, $ per task, output tokens/s | null]  Source: Artificial Analysis leaderboard, Sep 2026
+// Empty points mean there is no score for that specific model; historical Sol 6
+// scores are not transferred to Sol 6.1.
 export const BENCH: BenchModel[] = [
   { id: 'opus-5.5', name: 'Claude Opus 5.5', backend: 'claude', binds: 'opus-5.5', pts: [['low', 42, 0.55, 94], ['high', 54, 1.82, 91]] },
   { id: 'fable-5.1', name: 'Claude Fable 5.1', backend: 'claude', binds: 'fable-5.1', pts: [['low', 47, 2.37, 54], ['high', 51, 3.91, 55]] },
-  { id: 'gpt-6-sol', name: 'GPT-6 Sol', backend: 'codex', binds: 'gpt-6-sol', pts: [['low', 34, 0.13, null], ['high', 43, 0.37, null]] },
+  { id: 'sonnet-5.5', name: 'Claude Sonnet 5.5', backend: 'claude', binds: 'sonnet-5.5', pts: [] },
+  { id: 'gpt-6.1-sol', name: 'GPT-6.1 Sol', backend: 'codex', binds: 'gpt-6.1-sol', pts: [] },
   { id: 'gpt-6-luna', name: 'GPT-6 Luna', backend: 'codex', binds: 'gpt-6-luna', pts: [['low', 21, 0.0045, null], ['high', 32, 0.03, null], ['max', 37, 0.07, null]] },
   { id: 'grok-4.7', name: 'Grok 4.7', backend: 'composer', binds: 'cursor-grok-4.7-high', pts: [['high', 46, 2.73, 47]] },
   { id: 'minimax-m3', name: 'MiniMax M3', backend: 'minimax', binds: 'minimax-m3', pts: [['default', 29, 0.51, 118]] },
