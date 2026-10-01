@@ -39,7 +39,7 @@ describe('policy editing helpers', () => {
     expect(getChain(policy, ref)).toEqual(before);
     expect(getChain(next, ref)[0]).toBe(before[1]);
     expect(getChain(next, ref)[1]).toBe(before[0]);
-    expect(setRungEffort(before, 0, 'low')[0]).toBe('gpt-6-sol@low');
+    expect(setRungEffort(before, 0, 'low')[0]).toBe('gpt-6.1-sol@low');
   });
 
   test('rung options are bound, registry-available, not excluded, with selectable efforts', () => {
@@ -62,6 +62,17 @@ describe('policy editing helpers', () => {
 });
 
 describe('benchmark join', () => {
+  test('new policy models have no borrowed leaderboard scores and Sonnet uses Claude Code', () => {
+    expect(BENCH.some((row) => row.id === 'gpt-6-sol' || row.id === 'gpt-5.5')).toBe(false);
+    for (const id of ['gpt-6.1-sol', 'sonnet-5.5']) {
+      const row = BENCH.find((candidate) => candidate.id === id)!;
+      expect(row.pts).toEqual([]);
+      expect(resolveBenchModel(row, policy, registry)?.stableId).toBe(id);
+    }
+    expect(BENCH.find((row) => row.id === 'sonnet-5.5')?.backend).toBe('claude');
+    expect(resolveBenchModel(BENCH.find((row) => row.id === 'sonnet-5.5')!, policy, registry)?.entry.transportBackend).toBe('claude');
+  });
+
   test('resolves leaderboard rows through bindings and stable ids, and reports unregistered models', () => {
     const kimi = BENCH.find((row) => row.id === 'kimi-k3')!;
     expect(resolveBenchModel(kimi, policy, registry)?.stableId).toBe('opencode-go-kimi-k3');
@@ -106,7 +117,7 @@ describe('simulator', () => {
     const evaluation = evaluateRouting({ policy, registry, snapshot, context });
     expect(evaluation.error).toBeNull();
     expect(evaluation.workloadClass).toBe('hard-medium');
-    expect(evaluation.traversal?.selected?.rungId).toBe('gpt-6-sol@high');
+    expect(evaluation.traversal?.selected?.rungId).toBe('gpt-6.1-sol@high');
     const explained = explainEvaluation(evaluation, registry, policy);
     expect(explained.headline).toBe('Selected: Codex Sol @ high');
   });
@@ -132,7 +143,7 @@ describe('studio → diff → export', () => {
     const bundle = exportPolicyBundle({ current: policy, candidate: draft, digest: 'deadbeef', currentDocument: readFileSync(resolve(core, 'arc-model-policy.md'), 'utf8'), registry });
     expect(bundle.valid).toBe(true);
     expect(bundle.patch).toContain('+workload hard-medium: opus-5.5@high');
-    expect(bundle.markdown).toContain('lead changed gpt-6-sol@high → opus-5.5@high');
+    expect(bundle.markdown).toContain('lead changed gpt-6.1-sol@high → opus-5.5@high');
   });
 
   test('an invalid edit is reported immediately, never silently accepted', () => {

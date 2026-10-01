@@ -41,7 +41,7 @@ export function Legend({ theme, hover, setHover, clearHover }: Props) {
                     style={{ background: color }}
                   />
                 </span>
-                {m.name}
+                {m.name}{m.pts.length === 0 && <span className="text-muted"> · no leaderboard score</span>}
               </span>
             );
           })}

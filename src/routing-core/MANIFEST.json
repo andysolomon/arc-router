@@ -4,8 +4,8 @@
   "sourceCommit": "da3729aff4db1e5bbaa7279ac12493f1465c1c1e",
   "policy": {
     "label": "runner-routing-v4",
-    "updated": "2026-09-23",
-    "digest": "48dd5215914765e02db092723501dcd2f8777f5fbbd91e65249b1f53f02c7619"
+    "updated": "2026-09-30",
+    "digest": "e68e7b35a2d12e7c4f569cabad889a9e9bca360c237609dac684f33572a74b16"
   },
   "snapshotVersion": "2026-07-25+deepswe.v1.1+cursorbench.3.2",
   "files": {
@@ -21,7 +21,7 @@
     "explain-decision.ts": "ce3968d5898bce9a44c32d5aca322cc49f5b0e3bfcefe2f36140c203b2ac6e4c",
     "export-policy.ts": "d275f0aec810fde5825b288474a73c130d689a2fabd02b3a456f248e9c2fdc79",
     "index.ts": "39d168b1be9f0127d5ec070dab4446943d5ef3e6d38da97f3d1c8882638bea49",
-    "model-schema.ts": "9f93b2f771df8c86995632b903a0b5d56d2faf4b376157e7305171a5bad56534",
+    "model-schema.ts": "5b0b3402faf48e4c1d6f54a39ce236932d8d2991cd1f01e3136c4889a7d49fbf",
     "parse-policy.ts": "d25780f42ea0171a7328e2f15c85cd9567ee5a6430d692f242170a93960e641c",
     "policy-schema.ts": "fc39632102529d23068a362712e329f22595cc452fcce904e90130efc2cfa511",
     "render-policy.ts": "e7458d9d8abcc2052f9f784a21f8709d98e2f678ae07d99eeb438573a754e21c",
@@ -34,10 +34,10 @@
     "validate-registry.ts": "ab331b3d170b0675b33ac1dd6abd15eca0b16b8baf8e59b1c3f3bf2637fbf100",
     "vocabulary.ts": "37413289aca607b790c92c6bc915a0de9a91681dca29027e8a8d08407b61e1c6",
     "workload-profile.ts": "e8fc2e83314c212b1f31ca6840d1166935a7f7a79572d9673ca593d32a63fd10",
-    "generated/arc-model-policy.md": "0d5e06a544aa97affcf2f1bc84969cfccfca521f3c9cbf1b283d861a5bb29440",
+    "generated/arc-model-policy.md": "5bdf56c603bc2b71b1939073cdc027f60d099cb2d077b9d3f9313129370ceaeb",
     "generated/capability-snapshot.json": "42f49d318be33797e7227045699ee4be44eba52030f2c4c090b9aade59191370",
-    "generated/manifest.json": "5c0928d371ba2f64dac562427d0e75021c98679deac28efe302a1e7c8bde5bd4",
-    "generated/model-registry.json": "9e80933bf5b542619fe03ba9be5a3ae31c15f49c090855797129578d9be609ee",
-    "generated/routing-policy.json": "47675baef3e7c22341121331745e80bd793045d7d7ae7ce4882b85a2e432753f"
+    "generated/manifest.json": "159d89035acecd5a49738c82f82886c1f6a834a30e99ea774944c383cf7b2250",
+    "generated/model-registry.json": "032b44229683be7d177699f6c6a5999dd8bcabb8f98b9571319021332fd9be76",
+    "generated/routing-policy.json": "3d02b945a745dd2ba439de0f898bc813f8fe5f119cb950cd5e27feb998150845"
   }
 }
